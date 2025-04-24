@@ -1,5 +1,7 @@
-import 'dart:developer';  // Remova a importação de log de dart:math
+import 'dart:developer'; // Remova a importação de log de dart:math
+import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
@@ -10,15 +12,12 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    backgroundColor: AppColors.iceWhite,
+      backgroundColor: AppColors.iceWhite,
       body: Align(
         child: Column(
           children: [
             const SizedBox(height: 48.0),
-            Expanded(
-              flex: 2,
-              child: Image.asset('assets/images/Group 1.png'),
-            ),
+            Expanded(flex: 2, child: Image.asset('assets/images/Group 1.png')),
             Text(
               'Gaste de forma',
               style: AppTextStyles.mediumText.copyWith(
@@ -32,21 +31,33 @@ class OnboardingPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32.0,
-                 vertical: 16.0,
-                 ),
-              child: PrimaryButton(
-                text: 'Comece agora',
-                onPressed: () {},
-                ),
+              padding: const EdgeInsets.only(
+                left: 32.0,
+                right: 32.0,
+                top: 16.0,
+                bottom: 4.0,
+              ),
+              child: PrimaryButton(text: 'Comece agora', onPressed: () {}),
             ),
             const SizedBox(height: 16.0),
-            Text(
-              'Já é cadastrado? Log in',
-              style: AppTextStyles.smallText.copyWith(
-                color: AppColors.grey,
-              ),
+            MultiTextButton(
+              onPressed: () {
+                log('tap');
+              },
+              children: [
+                Text(
+                  'Já é cadastrado?',
+                  style: AppTextStyles.smallText.copyWith(
+                    color: AppColors.grey,
+                  ),
+                ),
+                Text(
+                  ' Log In ',
+                  style: AppTextStyles.smallText.copyWith(
+                    color: AppColors.greenlightTwo,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 24.0),
           ],
@@ -55,4 +66,3 @@ class OnboardingPage extends StatelessWidget {
     );
   }
 }
-

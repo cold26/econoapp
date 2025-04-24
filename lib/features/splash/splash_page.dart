@@ -14,15 +14,12 @@ class SplashPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.bluelightOne,
-               AppColors.bluelightTwo
-               ],
+            colors: [AppColors.bluelightOne, AppColors.bluelightTwo],
           ),
         ),
         child: Text(
           'EconoApp',
-          style: AppTextStyles.bigText.copyWith(color : AppColors.white), 
+          style: AppTextStyles.bigText.copyWith(color: AppColors.white),
         ),
       ),
     );

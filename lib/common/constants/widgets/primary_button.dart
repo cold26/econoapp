@@ -6,45 +6,43 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String text;
 
-  const PrimaryButton({
-    super.key, 
-    this.onPressed,
-    required this.text,
-  });
+  const PrimaryButton({super.key, this.onPressed, required this.text});
 
-  final BorderRadius _borderRadius =
-   const BorderRadius.all(Radius.circular(24.0));
+  final BorderRadius _borderRadius = const BorderRadius.all(
+    Radius.circular(24.0),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Ink(
-    height: 48.0,
-    decoration: BoxDecoration(
-      borderRadius: _borderRadius,
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: onPressed == null ? AppColors.greyGradient : AppColors.greenGradient, 
-      ),
-    ),
-    child: Container(
+      height: 48.0,
       decoration: BoxDecoration(
         borderRadius: _borderRadius,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors:
+              onPressed == null
+                  ? AppColors.greyGradient
+                  : AppColors.greenGradient,
+        ),
       ),
-      alignment: Alignment.center,
-      child: InkWell(
-        borderRadius: _borderRadius,
-        onTap: onPressed,
-        child: Align(
-          child: Text(
-            text,
-            style: AppTextStyles.mediumText18.copyWith(
-              color: AppColors.white,
+      child: Container(
+        decoration: BoxDecoration(borderRadius: _borderRadius),
+        alignment: Alignment.center,
+        child: InkWell(
+          borderRadius: _borderRadius,
+          onTap: onPressed,
+          child: Align(
+            child: Text(
+              text,
+              style: AppTextStyles.mediumText18.copyWith(
+                color: AppColors.white,
+              ),
             ),
           ),
         ),
       ),
-    ),
-          );
+    );
   }
 }
