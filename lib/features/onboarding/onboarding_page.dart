@@ -1,7 +1,6 @@
 import 'dart:developer'; // Remova a importação de log de dart:math
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
@@ -21,13 +20,13 @@ class OnboardingPage extends StatelessWidget {
             Text(
               'Gaste de forma',
               style: AppTextStyles.mediumText.copyWith(
-                color: AppColors.greenlightTwo,
+                color: AppColors.greenTwo,
               ),
             ),
             Text(
               'Inteligente.',
               style: AppTextStyles.mediumText.copyWith(
-                color: AppColors.greenlightTwo,
+                color: AppColors.greenTwo,
               ),
             ),
             Padding(
@@ -54,7 +53,7 @@ class OnboardingPage extends StatelessWidget {
                 Text(
                   ' Log In ',
                   style: AppTextStyles.smallText.copyWith(
-                    color: AppColors.greenlightTwo,
+                    color: AppColors.greenTwo,
                   ),
                 ),
               ],

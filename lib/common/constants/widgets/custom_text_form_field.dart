@@ -9,7 +9,10 @@ class CustomTextFormField extends StatefulWidget {
   final TextCapitalization? textCapitalization;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
-  
+  final Widget? suffixIcon;
+  final bool? obscureText;
+  final FormFieldValidator<String>? validator; 
+
   const CustomTextFormField({
     super.key,
     this.padding,
@@ -18,6 +21,9 @@ class CustomTextFormField extends StatefulWidget {
     this.textCapitalization, 
     this.controller, 
     this.keyboardType,
+    this.suffixIcon, 
+    this.obscureText,
+     this.validator,
   });
 
   @override
@@ -26,7 +32,7 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   final defaultBorder = const OutlineInputBorder(
-    borderSide: BorderSide(color: AppColors.greenlightTwo),
+    borderSide: BorderSide(color: AppColors.greenTwo),
   );
 
   @override
@@ -36,12 +42,15 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           widget.padding ??
           const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       child: TextFormField(
+        validator: widget.validator,
+        obscureText: widget.obscureText ?? false,
         textInputAction: TextInputAction.done,
         keyboardType: widget.keyboardType,
         controller: widget.controller,
         textCapitalization:
           widget.textCapitalization ?? TextCapitalization.none,
           decoration: InputDecoration(
+          suffixIcon: widget.suffixIcon,
           hintText: widget.hintText ?? "Digite seu texto aqui",
           floatingLabelBehavior: FloatingLabelBehavior.always,
           labelText: widget.labelText?.toUpperCase(),
@@ -49,7 +58,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             color: AppColors.grey,
           ),
           hintStyle: AppTextStyles.inputLabelText.copyWith(
-            color: AppColors.grey.withOpacity(0.5), // Cor suave para hintText
+            color: AppColors.grey, // Cor suave para hintText
           ),
           border: defaultBorder,
           focusedBorder: defaultBorder,
