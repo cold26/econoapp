@@ -6,6 +6,9 @@ import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/password_form_field.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
+import 'package:econoapp/common/utils/validator.dart';
+import 'package:econoapp/features/sign_up/sign_up_controller.dart';
+import 'package:econoapp/features/sign_up/sign_up_state.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -16,10 +19,56 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
-  
+  final _controller = SignUpController();
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.initState();
+  }
+
+  @override
+void initState() {
+  super.initState();
+  _controller.addListener(() {
+    log(_controller.state.toString());
+
+    if (_controller.state is SignUpLoadingState) {
+      showDialog(
+        context: context,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_controller.state is SignUpSucessState) {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Scaffold(
+            body: Center(
+              child: Text("Nova tela"),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_controller.state is SignUpErrorState) {
+      showBottomSheet(
+        context: context,
+        builder: (context) => const SizedBox(
+          height: 150,
+          child: Text("Erro ao Logar.Tente novamente"),
+        ),
+      );
+    }
+  });
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,48 +100,32 @@ class _SignUpPageState extends State<SignUpPage> {
             key: _formKey,
             child: Column(
               children: [
-                 CustomTextFormField(
+                CustomTextFormField(
                   hintText: 'Digite seu nome',
                   labelText: 'Seu nome',
-                  validator: (value){
-                    if (value != null && value.isEmpty){
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                },
+                  validator: Validator.validateName,
                 ),
-                 CustomTextFormField(
+                CustomTextFormField(
                   hintText: 'Digite seu email',
                   labelText: 'Seu email',
-                  validator: (value){
-                    if (value != null && value.isEmpty){
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                },
+                  validator: Validator.validateEmail,
+                ),
+                PasswordFormField(
+                  controller: _passwordController,
+                  labelText: "Escolha uma senha",
+                  hintText: "********",
+                  helperText: 'A senha deve ter no mínimo 8 caracteres',
                 ),
                 PasswordFormField(
                   controller: TextEditingController(),
-                  labelText: "Escolha uma senha",
-                  hintText: "********",
-                  validator: (value){
-                    if (value != null && value.isEmpty){
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                },
-                ),
-                 PasswordFormField(
-                  controller: TextEditingController(),
                   labelText: "Confirme sua senha",
                   hintText: "********",
-                  validator: (value){
-                    if (value != null && value.isEmpty){
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                },
-                )
+                  validator:
+                      (value) => Validator.validateConfirmPassword(
+                        value,
+                        _passwordController.text,
+                      ),
+                ),
               ],
             ),
           ),
@@ -107,17 +140,20 @@ class _SignUpPageState extends State<SignUpPage> {
             child: PrimaryButton(
               text: 'Entrar',
               onPressed: () {
-                final valid =  _formKey.currentState != null && _formKey.currentState!.validate();
-                if(valid){
-                  log('Continuar lógica de login');
+                final valid =
+                    _formKey.currentState != null &&
+                    _formKey.currentState!.validate();
+                if (valid) {
+                  _controller.doSignUp();
                 } else {
                   log('erro ao logar');
-                }              },
+                }
+              },
             ),
           ),
           const SizedBox(height: 16.0),
           MultiTextButton(
-            onPressed: () => log('tap'), 
+            onPressed: () => log('tap'),
             children: [
               Text(
                 'Já é cadastrado?',
@@ -136,5 +172,3 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
-
-

@@ -12,6 +12,7 @@ class CustomTextFormField extends StatefulWidget {
   final Widget? suffixIcon;
   final bool? obscureText;
   final FormFieldValidator<String>? validator; 
+  final String? helperText;
 
   const CustomTextFormField({
     super.key,
@@ -24,6 +25,7 @@ class CustomTextFormField extends StatefulWidget {
     this.suffixIcon, 
     this.obscureText,
      this.validator,
+    this.helperText,
   });
 
   @override
@@ -35,13 +37,35 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     borderSide: BorderSide(color: AppColors.greenTwo),
   );
 
+
+String? _helperText;
+
+@override
+  void initState() {
+    super.initState();
+    _helperText = widget.helperText;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding:
           widget.padding ??
-          const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          const EdgeInsets.symmetric(
+            horizontal: 24.0,
+             vertical: 12.0),
       child: TextFormField(
+        onChanged: (value){
+          if(value.length == 1){
+            setState(() {
+              _helperText = null;
+            });
+          } else if(value.isEmpty){
+            setState(() {
+              _helperText = widget.helperText;
+            });
+          }
+        },
         validator: widget.validator,
         obscureText: widget.obscureText ?? false,
         textInputAction: TextInputAction.done,
@@ -50,8 +74,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         textCapitalization:
           widget.textCapitalization ?? TextCapitalization.none,
           decoration: InputDecoration(
+            helperText: _helperText,
+            helperMaxLines: 3,
           suffixIcon: widget.suffixIcon,
-          hintText: widget.hintText ?? "Digite seu texto aqui",
+          hintText: widget.hintText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           labelText: widget.labelText?.toUpperCase(),
           labelStyle: AppTextStyles.inputLabelText.copyWith(
