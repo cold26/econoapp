@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
+import 'package:econoapp/common/constants/widgets/custom_bottom_sheet.dart';
+import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
 import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/password_form_field.dart';
@@ -26,47 +28,43 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void dispose() {
     _passwordController.dispose();
-    super.initState();
+    super.dispose();
   }
 
   @override
-void initState() {
-  super.initState();
-  _controller.addListener(() {
-    log(_controller.state.toString());
+  void initState() {
+    super.initState();
+    _controller.addListener(
+      () {
+      if (_controller.state is SignUpLoadingState) {
+        showDialog(
+          context: context,
+          builder: (context) => CustomCircularProgressIndicator(),
+        );
+      }
 
-    if (_controller.state is SignUpLoadingState) {
-      showDialog(
-        context: context,
-        builder: (context) => const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_controller.state is SignUpSucessState) {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Scaffold(
-            body: Center(
-              child: Text("Nova tela"),
-            ),
+      if (_controller.state is SignUpSuccessState) {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => const Scaffold(
+                  body: Center(
+                    child: Text("Nova tela"),
+                    ),
+                    ),
           ),
-        ),
-      );
-    }
+        );
+      }
 
-    if (_controller.state is SignUpErrorState) {
-      showBottomSheet(
-        context: context,
-        builder: (context) => const SizedBox(
-          height: 150,
-          child: Text("Erro ao Logar.Tente novamente"),
-        ),
-      );
-    }
-  });
-}
+      if (_controller.state is SignUpErrorState) {
+        Navigator.pop(context);
+        customModalBottomSheet(context);
+      }
+    });
+  }
+
 
 
   @override
@@ -172,3 +170,5 @@ void initState() {
     );
   }
 }
+
+
