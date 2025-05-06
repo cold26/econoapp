@@ -8,6 +8,7 @@ import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/password_form_field.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
+import 'package:econoapp/common/services/mock_auth_service.dart';
 import 'package:econoapp/common/utils/validator.dart';
 import 'package:econoapp/features/sign_up/sign_up_controller.dart';
 import 'package:econoapp/features/sign_up/sign_up_state.dart';
@@ -21,13 +22,18 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _controller = SignUpController();
+  final _controller = SignUpController(MockAuthService());
 
   @override
   void dispose() {
+    _emailController.dispose();
+    _nameController.dispose();
     _passwordController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -59,8 +65,13 @@ class _SignUpPageState extends State<SignUpPage> {
       }
 
       if (_controller.state is SignUpErrorState) {
+        final error = _controller.state as SignUpErrorState;
         Navigator.pop(context);
-        customModalBottomSheet(context);
+        customModalBottomSheet(
+          context,
+          content: error.message,
+          buttonText: "Tentar novamente",
+          );
       }
     });
   }
@@ -104,6 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   validator: Validator.validateName,
                 ),
                 CustomTextFormField(
+                  controller: _emailController,
                   hintText: 'Digite seu email',
                   labelText: 'Seu email',
                   validator: Validator.validateEmail,
@@ -142,7 +154,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     _formKey.currentState != null &&
                     _formKey.currentState!.validate();
                 if (valid) {
-                  _controller.doSignUp();
+                  _controller.doSignUp(
+                  name: _nameController.text,
+                  email: _emailController.text,              
+                  password: _passwordController.text,  
+                  );
                 } else {
                   log('erro ao logar');
                 }

@@ -3,8 +3,12 @@ import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
-
-Future<void> customModalBottomSheet(BuildContext context) {
+Future<void> customModalBottomSheet(
+  BuildContext context, {
+  required String content,
+  required String buttonText,
+  VoidCallback? onPressed,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -23,29 +27,33 @@ Future<void> customModalBottomSheet(BuildContext context) {
           ),
         ),
         height: 200,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'Ops. Algo deu errado.',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 32.0,
+              ),
+              child: Text(
+                content,
                 style: AppTextStyles.mediumText.copyWith(
                   color: AppColors.greentOne,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16.0,
-                  horizontal: 32.0,
-                ),
-                child: PrimaryButton(
-                  text: 'Tentar Novamente',
-                  onPressed: () => Navigator.pop(context),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 32.0,
               ),
-            ],
-          ),
+              child: PrimaryButton(
+                text: buttonText,
+                onPressed: onPressed ?? () => Navigator.pop(context),
+              ),
+            ),
+          ],
         ),
       );
     },
