@@ -1,4 +1,5 @@
 import 'dart:developer'; // Remova a importação de log de dart:math
+import 'package:econoapp/common/constants/routes.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
 import 'package:econoapp/features/sign_up/sign_up_page.dart';
@@ -40,20 +41,16 @@ class OnboardingPage extends StatelessWidget {
               child: PrimaryButton(
                 text: 'Comece agora',
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignUpPage(),
-                    ),
+                    NamedRoutes.signUp,
                   );
                 },
               ),
             ),
             const SizedBox(height: 16.0),
             MultiTextButton(
-              onPressed: () {
-                log('tap');
-              },
+              onPressed: () => Navigator.pushNamed(context, NamedRoutes.signIn),
               children: [
                 Text(
                   'Já é cadastrado?',

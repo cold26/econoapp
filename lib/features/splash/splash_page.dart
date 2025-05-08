@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
+import 'package:econoapp/common/constants/routes.dart';
 import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
 import 'package:econoapp/features/onboarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,9 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void navigateToOnboarding() {
-    Navigator.pushReplacement(
+    Navigator.pushReplacementNamed(
       context,
-      MaterialPageRoute(builder: (context) => const OnboardingPage()),
+      NamedRoutes.initial
     );
   }
 
