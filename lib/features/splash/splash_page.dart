@@ -4,7 +4,6 @@ import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:econoapp/common/constants/routes.dart';
 import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
-import 'package:econoapp/features/onboarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {

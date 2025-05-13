@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "743268312226",
+    "project_id": "econoapp-60ee3",
+    "storage_bucket": "econoapp-60ee3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743268312226:android:06302a1ac1bb920415a3fb",
+        "android_client_info": {
+          "package_name": "com.example.econoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3FUXu0sbCP9OEKk09A08veHOCVIZedZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

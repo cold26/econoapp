@@ -9,10 +9,10 @@ import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/password_form_field.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
-import 'package:econoapp/common/services/mock_auth_service.dart';
 import 'package:econoapp/common/utils/validator.dart';
 import 'package:econoapp/features/sign_in/sign_in_controller.dart';
 import 'package:econoapp/features/sign_in/sign_in_state.dart';
+import 'package:econoapp/locator.dart';
 import 'package:flutter/material.dart';
 
 class SignInPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _controller = SignInController(MockAuthService());
+  final _controller = locator.get<SignInController>();
 
   @override
   void dispose() {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:econoapp/common/services/auth_service.dart';
 import 'package:econoapp/features/sign_up/sign_up_state.dart';
