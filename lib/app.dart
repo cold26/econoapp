@@ -1,8 +1,13 @@
 import 'package:econoapp/common/constants/routes.dart';
+import 'package:econoapp/features/home/home_page.dart';
+import 'package:econoapp/features/home/home_page_view.dart';
 import 'package:econoapp/features/onboarding/onboarding.dart';
+import 'package:econoapp/features/profile/profile_page.dart';
 import 'package:econoapp/features/sign_in/sign_in_page.dart';
 import 'package:econoapp/features/sign_up/sign_up_page.dart';
 import 'package:econoapp/features/splash/splash_page.dart';
+import 'package:econoapp/features/stats/stats_page.dart';
+import 'package:econoapp/features/wallet/wallet_page.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -18,6 +23,10 @@ class App extends StatelessWidget {
         NamedRoutes.splash : (context) => const SplashPage(),
         NamedRoutes.signUp : (context) => const SignUpPage(),
         NamedRoutes.signIn : (context) => const SignInPage(),
+        NamedRoutes.home : (context) => const HomePageView(),
+        NamedRoutes.stats: (context) => const StatsPage(),
+        NamedRoutes.wallet: (context) => const WalletPage(),
+        NamedRoutes.profile: (context) => const ProfilePage(),
       },
     );
   }
