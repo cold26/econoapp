@@ -52,7 +52,7 @@ class _SignInPageState extends State<SignInPage> {
         Navigator.pop(context);
         Navigator.pushReplacementNamed(
           context,
-          NamedRoutes.home,
+          NamedRoute.home,
         );
       }
 
@@ -84,7 +84,7 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               Text(
                 'Bem vindo de volta',
-                style: AppTextStyles.mediumText.copyWith(
+                style: AppTextStyles.mediumText36.copyWith(
                   color: AppColors.greenTwo,
                 ),
               ),
@@ -139,7 +139,7 @@ class _SignInPageState extends State<SignInPage> {
           MultiTextButton(
             onPressed: () => Navigator.popAndPushNamed(
               context,
-              NamedRoutes.signUp),
+              NamedRoute.signUp),
             children: [
               Text(
                 'Ainda não é cadastrado??',

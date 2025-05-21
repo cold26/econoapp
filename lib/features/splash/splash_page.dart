@@ -1,13 +1,13 @@
-
-import 'package:econoapp/common/constants/app_colors.dart';
-import 'package:econoapp/common/constants/app_text_styles.dart';
-import 'package:econoapp/common/constants/routes.dart';
 import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
-import 'package:econoapp/common/extensions/sizes.dart';
-import 'package:econoapp/features/splash/splash_controller.dart';
-import 'package:econoapp/features/splash/splash_state.dart';
-import 'package:econoapp/locator.dart';
 import 'package:flutter/material.dart';
+
+import '../../common/constants/app_colors.dart';
+import '../../common/constants/app_text_styles.dart';
+import '../../common/constants/routes.dart';
+import '../../common/extensions/sizes.dart';
+import '../../locator.dart';
+import 'splash_controller.dart';
+import 'splash_state.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -22,18 +22,20 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) => Sizes.init(context));
+
     _splashController.isUserLogged();
     _splashController.addListener(() {
-      if (_splashController.state is SplashStateSuccess) {
+      if (_splashController.state is AuthenticatedUser) {
         Navigator.pushReplacementNamed(
           context,
-          NamedRoutes.home,
+          NamedRoute.home,
         );
       } else {
-       Navigator.pushReplacementNamed(
+        Navigator.pushReplacementNamed(
           context,
-          NamedRoutes.initial,
+          NamedRoute.initial,
         );
       }
     });
@@ -61,8 +63,8 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'EconoApp',
-              style: AppTextStyles.bigText.copyWith(color: AppColors.white),
+              'financy',
+              style: AppTextStyles.bigText50.copyWith(color: AppColors.white),
             ),
             const CustomCircularProgressIndicator(),
           ],

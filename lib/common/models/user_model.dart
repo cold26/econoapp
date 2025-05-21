@@ -8,11 +8,11 @@ class UserModel {
   final String? password;
 
   UserModel({
-     this.name, 
-     this.email, 
-     this.password,
-     this.id,
-     });
+    this.id,
+    this.name,
+    this.email,
+    this.password,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -34,5 +34,6 @@ class UserModel {
 
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

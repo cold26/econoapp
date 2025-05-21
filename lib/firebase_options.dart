@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,30 +49,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCovqD6lnbS0id0DgWh2hypC7_EPe7pcaI',
-    appId: '1:743268312226:web:3bd2f481ae62996015a3fb',
-    messagingSenderId: '743268312226',
-    projectId: 'econoapp-60ee3',
-    authDomain: 'econoapp-60ee3.firebaseapp.com',
-    storageBucket: 'econoapp-60ee3.firebasestorage.app',
-    measurementId: 'G-8SQ14F9E34',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC3FUXu0sbCP9OEKk09A08veHOCVIZedZY',
-    appId: '1:743268312226:android:06302a1ac1bb920415a3fb',
-    messagingSenderId: '743268312226',
-    projectId: 'econoapp-60ee3',
-    storageBucket: 'econoapp-60ee3.firebasestorage.app',
+    apiKey: 'AIzaSyB-lVj9lIwBszX_5L8abRFA75-l-K6G14M',
+    appId: '1:482341140240:android:1ecd110077159485291795',
+    messagingSenderId: '482341140240',
+    projectId: 'projetopi-f14c2',
+    storageBucket: 'projetopi-f14c2.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAxhM4TnTuKuP2bcHENYGwoq2hm0gf0Ykw',
-    appId: '1:743268312226:ios:556eb6cf95de9f1815a3fb',
-    messagingSenderId: '743268312226',
-    projectId: 'econoapp-60ee3',
-    storageBucket: 'econoapp-60ee3.firebasestorage.app',
+    apiKey: 'AIzaSyAfHZzIhZJzTATe9JW86OjHaGPc3DW7epw',
+    appId: '1:482341140240:ios:9493c197e02eb7df291795',
+    messagingSenderId: '482341140240',
+    projectId: 'projetopi-f14c2',
+    storageBucket: 'projetopi-f14c2.firebasestorage.app',
     iosBundleId: 'com.example.econoapp',
   );
 

@@ -1,16 +1,20 @@
-
 import 'package:econoapp/common/services/auth_service.dart';
 import 'package:econoapp/common/services/secure_storage.dart';
-import 'package:econoapp/features/sign_up/sign_up_state.dart';
 import 'package:flutter/foundation.dart';
+
+
+import 'sign_up_state.dart';
 
 class SignUpController extends ChangeNotifier {
   final AuthService _service;
   final SecureStorage _secureStorage;
 
-  SignUpController(this._service, this._secureStorage);
+  SignUpController(
+    this._service,
+    this._secureStorage,
+  );
 
-  SignUpState _state = SignUpInitialState();
+  SignUpState _state = SignUpStateInitial();
 
   SignUpState get state => _state;
 
@@ -19,30 +23,30 @@ class SignUpController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> doSignUp({
-    required String? name,
+  Future<void> signUp({
+    required String name,
     required String email,
     required String password,
   }) async {
-    _changeState(SignUpLoadingState());
+    _changeState(SignUpStateLoading());
 
     try {
-        final user = await _service.signUp(
+      final user = await _service.signUp(
         name: name,
         email: email,
         password: password,
       );
-      if(user.id!=null) {
+      if (user.id != null) {
         await _secureStorage.write(
           key: "CURRENT_USER",
-          value: user.toJson()
-          );
-      _changeState(SignUpSuccessState());
+          value: user.toJson(),
+        );
+        _changeState(SignUpStateSuccess());
       } else {
-       throw Exception();
-        }
+        throw Exception();
+      }
     } catch (e) {
-      _changeState(SignUpErrorState(e.toString()));
+      _changeState(SignUpStateError(e.toString()));
     }
   }
 }

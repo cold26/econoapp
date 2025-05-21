@@ -1,32 +1,32 @@
-import 'package:econoapp/common/constants/routes.dart';
-import 'package:econoapp/features/home/home_page.dart';
-import 'package:econoapp/features/home/home_page_view.dart';
-import 'package:econoapp/features/onboarding/onboarding.dart';
-import 'package:econoapp/features/profile/profile_page.dart';
-import 'package:econoapp/features/sign_in/sign_in_page.dart';
-import 'package:econoapp/features/sign_up/sign_up_page.dart';
-import 'package:econoapp/features/splash/splash_page.dart';
-import 'package:econoapp/features/stats/stats_page.dart';
-import 'package:econoapp/features/wallet/wallet_page.dart';
 import 'package:flutter/material.dart';
+
+import 'common/constants/routes.dart';
+import 'features/home/home_page_view.dart';
+import 'features/onboarding/onboarding_page.dart';
+import 'features/profile/profile_page.dart';
+import 'features/sign_in/sign_in_page.dart';
+import 'features/sign_up/sign_up_page.dart';
+import 'features/splash/splash_page.dart';
+import 'features/stats/stats_page.dart';
+import 'features/wallet/wallet_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      // theme: DefaultTheme.lightTheme,
-      initialRoute: NamedRoutes.splash,
+    return MaterialApp(
+      // theme: defaultTheme,
+      initialRoute: NamedRoute.splash,
       routes: {
-        NamedRoutes.initial: (context) => OnboardingPage(),
-        NamedRoutes.splash : (context) => const SplashPage(),
-        NamedRoutes.signUp : (context) => const SignUpPage(),
-        NamedRoutes.signIn : (context) => const SignInPage(),
-        NamedRoutes.home : (context) => const HomePageView(),
-        NamedRoutes.stats: (context) => const StatsPage(),
-        NamedRoutes.wallet: (context) => const WalletPage(),
-        NamedRoutes.profile: (context) => const ProfilePage(),
+        NamedRoute.initial: (context) => const OnboardingPage(),
+        NamedRoute.splash: (context) => const SplashPage(),
+        NamedRoute.signUp: (context) => const SignUpPage(),
+        NamedRoute.signIn: (context) => const SignInPage(),
+        NamedRoute.home: (context) => const HomePageView(),
+        NamedRoute.stats: (context) => const StatsPage(),
+        NamedRoute.wallet: (context) => const WalletPage(),
+        NamedRoute.profile: (context) => const ProfilePage(),
       },
     );
   }

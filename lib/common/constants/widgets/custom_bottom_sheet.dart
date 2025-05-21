@@ -38,8 +38,8 @@ Future<void> customModalBottomSheet(
               ),
               child: Text(
                 content,
-                style: AppTextStyles.mediumText.copyWith(
-                  color: AppColors.greentOne,
+                style: AppTextStyles.mediumText36.copyWith(
+                  color: AppColors.greenOne,
                 ),
               ),
             ),

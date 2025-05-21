@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
 import 'package:econoapp/common/constants/app_colors.dart';
@@ -15,6 +16,7 @@ import 'package:econoapp/features/sign_up/sign_up_state.dart';
 import 'package:econoapp/locator.dart';
 import 'package:flutter/material.dart';
 
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -23,16 +25,16 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   final _controller = locator.get<SignUpController>();
 
   @override
   void dispose() {
-    _emailController.dispose();
     _nameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _controller.dispose();
     super.dispose();
@@ -43,97 +45,91 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
     _controller.addListener(
       () {
-      if (_controller.state is SignUpLoadingState) {
-        showDialog(
-          context: context,
-          builder: (context) => CustomCircularProgressIndicator(),
-        );
-      }
-
-      if (_controller.state is SignUpSuccessState) {
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(
-          context,
-          NamedRoutes.home,
-        );
-      }
-
-      if (_controller.state is SignUpErrorState) {
-        final error = _controller.state as SignUpErrorState;
-        Navigator.pop(context);
-        customModalBottomSheet(
-          context,
-          content: error.message,
-          buttonText: "Tentar novamente",
+        if (_controller.state is SignUpStateLoading) {
+          showDialog(
+            context: context,
+            builder: (context) => const CustomCircularProgressIndicator(),
           );
-      }
-    });
+        }
+        if (_controller.state is SignUpStateSuccess) {
+          Navigator.pop(context);
+
+          Navigator.pushReplacementNamed(
+            context,
+            NamedRoute.home,
+          );
+        }
+
+        if (_controller.state is SignUpStateError) {
+          final error = _controller.state as SignUpStateError;
+          Navigator.pop(context);
+          customModalBottomSheet(
+            context,
+            content: error.message,
+            buttonText: "Tentar novamente",
+          );
+        }
+      },
+    );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
-          Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Centraliza o conteúdo verticalmente
-            crossAxisAlignment:
-                CrossAxisAlignment
-                    .center, // Centraliza o conteúdo horizontalmente
-            children: [
-              Text(
-                'Gaste de forma',
-                style: AppTextStyles.mediumText.copyWith(
-                  color: AppColors.greenTwo,
-                ),
-              ),
-              Text(
-                'Inteligente.',
-                style: AppTextStyles.mediumText.copyWith(
-                  color: AppColors.greenTwo,
-                ),
-              ),
-            ],
+          Text(
+            'Spend Smarter',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.mediumText36.copyWith(
+              color: AppColors.greenOne,
+            ),
           ),
-          Image.asset('assets/images/sign_up_image.png'),
+          Text(
+            'Save More',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.mediumText36.copyWith(
+              color: AppColors.greenOne,
+            ),
+          ),
+          Image.asset(
+            'assets/images/sign_up_image.png',
+          ),
           Form(
             key: _formKey,
             child: Column(
               children: [
                 CustomTextFormField(
-                  hintText: 'Digite seu nome',
-                  labelText: 'Seu nome',
+                  controller: _nameController,
+                  labelText: "your name",
+                  hintText: "JOHN DOE",
                   validator: Validator.validateName,
                 ),
                 CustomTextFormField(
                   controller: _emailController,
-                  hintText: 'Digite seu email',
-                  labelText: 'Seu email',
+                  labelText: "your email",
+                  hintText: "john@email.com",
                   validator: Validator.validateEmail,
                 ),
                 PasswordFormField(
                   controller: _passwordController,
-                  labelText: "Escolha uma senha",
-                  hintText: "********",
-                  helperText: 'A senha deve ter no mínimo 8 caracteres',
+                  labelText: "choose your password",
+                  hintText: "*********",
+                  validator: Validator.validatePassword,
+                  helperText:
+                      "Must have at least 8 characters, 1 capital letter and 1 number.",
                 ),
                 PasswordFormField(
-                  controller: TextEditingController(),
-                  labelText: "Confirme sua senha",
-                  hintText: "********",
-                  validator:
-                      (value) => Validator.validateConfirmPassword(
-                        value,
-                        _passwordController.text,
-                      ),
+                  labelText: "confirm your password",
+                  hintText: "*********",
+                  validator: (value) => Validator.validateConfirmPassword(
+                    _passwordController.text,
+                    value,
+                  ),
                 ),
               ],
             ),
           ),
-          const TextField(),
           Padding(
             padding: const EdgeInsets.only(
               left: 32.0,
@@ -142,35 +138,38 @@ class _SignUpPageState extends State<SignUpPage> {
               bottom: 4.0,
             ),
             child: PrimaryButton(
-              text: 'Entrar',
+              text: 'Sign Up',
               onPressed: () {
-                final valid =
-                    _formKey.currentState != null &&
+                final valid = _formKey.currentState != null &&
                     _formKey.currentState!.validate();
                 if (valid) {
-                  _controller.doSignUp(
-                  name: _nameController.text,
-                  email: _emailController.text,              
-                  password: _passwordController.text,  
+                  _controller.signUp(
+                    name: _nameController.text,
+                    email: _emailController.text,
+                    password: _passwordController.text,
                   );
                 } else {
-                  log('erro ao logar');
+                  log("erro ao logar");
                 }
               },
             ),
           ),
-          const SizedBox(height: 16.0),
           MultiTextButton(
-            onPressed: () => Navigator.popAndPushNamed(context, NamedRoutes.signIn),
+            onPressed: () => Navigator.popAndPushNamed(
+              context,
+              NamedRoute.signIn,
+            ),
             children: [
               Text(
-                'Já é cadastrado?',
-                style: AppTextStyles.smallText.copyWith(color: AppColors.grey),
+                'Already have account? ',
+                style: AppTextStyles.smallText.copyWith(
+                  color: AppColors.grey,
+                ),
               ),
               Text(
-                ' Log In ',
+                'Sign In ',
                 style: AppTextStyles.smallText.copyWith(
-                  color: AppColors.greenTwo,
+                  color: AppColors.greenOne,
                 ),
               ),
             ],
@@ -180,5 +179,3 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
-
-

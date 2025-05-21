@@ -1,10 +1,12 @@
-// Remova a importação de log de dart:math
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
+import 'package:econoapp/common/constants/app_colors.dart';
+import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:econoapp/common/constants/routes.dart';
 import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
 import 'package:econoapp/common/constants/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
-import 'package:econoapp/common/constants/app_colors.dart';
-import 'package:econoapp/common/constants/app_text_styles.dart';
+
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -13,61 +15,64 @@ class OnboardingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.iceWhite,
-      body: Align(
-        child: Column(
-          children: [
-            const SizedBox(height: 48.0),
-            Expanded(flex: 2, child: Image.asset('assets/images/Group 1.png')),
-            Text(
-              'Gaste de forma',
-              style: AppTextStyles.mediumText.copyWith(
-                color: AppColors.greenTwo,
-              ),
+      body: Column(
+        children: [
+          const SizedBox(height: 48.0),
+          Expanded(
+            child: Image.asset(
+              'assets/images/onboarding_image.png',
             ),
-            Text(
-              'Inteligente.',
-              style: AppTextStyles.mediumText.copyWith(
-                color: AppColors.greenTwo,
-              ),
+          ),
+          Text(
+            'Spend Smarter',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.mediumText36.copyWith(
+              color: AppColors.greenOne,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 32.0,
-                right: 32.0,
-                top: 16.0,
-                bottom: 4.0,
-              ),
-              child: PrimaryButton(
-                text: 'Comece agora',
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    NamedRoutes.signUp,
-                  );
-                },
-              ),
+          ),
+          Text(
+            'Save More',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.mediumText36.copyWith(
+              color: AppColors.greenOne,
             ),
-            const SizedBox(height: 16.0),
-            MultiTextButton(
-              onPressed: () => Navigator.pushNamed(context, NamedRoutes.signIn),
-              children: [
-                Text(
-                  'Já é cadastrado?',
-                  style: AppTextStyles.smallText.copyWith(
-                    color: AppColors.grey,
-                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 32.0,
+              right: 32.0,
+              top: 16.0,
+              bottom: 4.0,
+            ),
+            child: PrimaryButton(
+              text: 'Get Started',
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  NamedRoute.signUp,
+                );
+              },
+            ),
+          ),
+          MultiTextButton(
+            onPressed: () => Navigator.pushNamed(context, NamedRoute.signIn),
+            children: [
+              Text(
+                'Already have account? ',
+                style: AppTextStyles.smallText.copyWith(
+                  color: AppColors.grey,
                 ),
-                Text(
-                  ' Log In ',
-                  style: AppTextStyles.smallText.copyWith(
-                    color: AppColors.greenTwo,
-                  ),
+              ),
+              Text(
+                'Sign In ',
+                style: AppTextStyles.smallText.copyWith(
+                  color: AppColors.greenOne,
                 ),
-              ],
-            ),
-            const SizedBox(height: 24.0),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24.0),
+        ],
       ),
     );
   }
