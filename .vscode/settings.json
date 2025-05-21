@@ -5,5 +5,6 @@
         "source.fixAll": "explicit",
         "source.organizeImports": "explicit"
     },
-    "dart.lineLength": 80
+    "dart.lineLength": 80,
+    "git.ignoreLimitWarning": true
 }
