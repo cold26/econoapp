@@ -1,7 +1,9 @@
 import 'package:econoapp/common/services/auth_service.dart';
 import 'package:econoapp/common/services/secure_storage.dart';
-import 'package:econoapp/locator.dart';
 import 'package:flutter/material.dart';
+
+import '../../locator.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

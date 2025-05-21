@@ -1,18 +1,20 @@
 import 'package:econoapp/common/services/auth_service.dart';
+import 'package:econoapp/common/services/graphql_service.dart';
 import 'package:econoapp/common/services/secure_storage.dart';
 import 'package:flutter/foundation.dart';
-
 
 import 'sign_up_state.dart';
 
 class SignUpController extends ChangeNotifier {
-  final AuthService _service;
-  final SecureStorage _secureStorage;
+  final AuthService authService;
+  final SecureStorage secureStorage;
+  final GraphQLService graphQLService;
 
-  SignUpController(
-    this._service,
-    this._secureStorage,
-  );
+  SignUpController({
+    required this.authService,
+    required this.secureStorage,
+    required this.graphQLService,
+  });
 
   SignUpState _state = SignUpStateInitial();
 
@@ -31,16 +33,19 @@ class SignUpController extends ChangeNotifier {
     _changeState(SignUpStateLoading());
 
     try {
-      final user = await _service.signUp(
+      final user = await authService.signUp(
         name: name,
         email: email,
         password: password,
       );
       if (user.id != null) {
-        await _secureStorage.write(
+        await secureStorage.write(
           key: "CURRENT_USER",
           value: user.toJson(),
         );
+
+        await graphQLService.init();
+
         _changeState(SignUpStateSuccess());
       } else {
         throw Exception();

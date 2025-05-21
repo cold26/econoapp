@@ -1,7 +1,8 @@
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
-import 'package:econoapp/common/constants/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
+
+import 'primary_button.dart';
 
 Future<void> customModalBottomSheet(
   BuildContext context, {
@@ -38,7 +39,7 @@ Future<void> customModalBottomSheet(
               ),
               child: Text(
                 content,
-                style: AppTextStyles.mediumText36.copyWith(
+                style: AppTextStyles.mediumText20.copyWith(
                   color: AppColors.greenOne,
                 ),
               ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:econoapp/common/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,10 +27,10 @@ class FirebaseAuthService implements AuthService {
           id: _auth.currentUser?.uid,
         );
       } else {
-        throw Exception("Usuário não autenticado");
+        throw Exception();
       }
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? "Erro no login";
+      throw e.message ?? "null";
     } catch (e) {
       rethrow;
     }
@@ -41,43 +43,33 @@ class FirebaseAuthService implements AuthService {
     required String password,
   }) async {
     try {
-      // Chama a função de Cloud Functions para registrar o usuário
       await _functions.httpsCallable('registerUser').call({
         "email": email,
         "password": password,
         "displayName": name,
       });
 
-      // Realiza o login após o cadastro
       final result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       if (result.user != null) {
-        // Aqui vamos adicionar a verificação para garantir que o usuário foi autenticado
-        print("Usuário autenticado: ${_auth.currentUser?.uid}");
-
-        // Tenta obter o token após a autenticação
-        final token = await _auth.currentUser?.getIdToken();
-        if (token != null) {
-          print("TOKEN após login: $token"); // Imprime o token no console
-        } else {
-          print("Token não gerado.");
-        }
-
+  
+        log(await _auth.currentUser?.getIdToken(true) ?? 'null');
+        await result.user!.updateDisplayName(name);
         return UserModel(
           name: _auth.currentUser?.displayName,
           email: _auth.currentUser?.email,
           id: _auth.currentUser?.uid,
         );
       } else {
-        throw Exception("Usuário não autenticado");
+        throw Exception();
       }
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? "Erro no cadastro";
+      throw e.message ?? "null";
     } on FirebaseFunctionsException catch (e) {
-      throw e.message ?? "Erro ao chamar a função do Firebase";
+      throw e.message ?? "null";
     } catch (e) {
       rethrow;
     }
@@ -95,14 +87,11 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<String> get userToken async {
     try {
-      // Tenta obter o token do usuário atual
       final token = await _auth.currentUser?.getIdToken();
       if (token != null) {
-        // Imprime o token para depuração
-        print("TOKEN do usuário: $token");
         return token;
       } else {
-        throw Exception('Usuário não encontrado');
+        throw Exception('user not found');
       }
     } catch (e) {
       rethrow;
