@@ -1,9 +1,6 @@
-import 'package:econoapp/features/transactions/transactions_page.dart';
 import 'package:flutter/material.dart';
 
 import 'common/constants/routes.dart';
-import 'common/models/transaction_model.dart';
-import 'common/themes/default_theme.dart';
 import 'features/home/home_page_view.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/profile/profile_page.dart';
@@ -19,7 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: CustomTheme().defaultTheme,
+      // theme: defaultTheme,
       initialRoute: NamedRoute.splash,
       routes: {
         NamedRoute.initial: (context) => const OnboardingPage(),
@@ -30,12 +27,6 @@ class App extends StatelessWidget {
         NamedRoute.stats: (context) => const StatsPage(),
         NamedRoute.wallet: (context) => const WalletPage(),
         NamedRoute.profile: (context) => const ProfilePage(),
-        NamedRoute.transaction: (context) {
-          final args = ModalRoute.of(context)?.settings.arguments;
-          return TransactionPage(
-            transaction: args != null ? args as TransactionModel : null,
-          );
-        },
       },
     );
   }

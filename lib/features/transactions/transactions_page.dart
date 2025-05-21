@@ -110,8 +110,8 @@ class _TransactionPageState extends State<TransactionPage>
         children: [
           AppHeader(
             title: widget.transaction != null
-                ? 'Editar Transação'
-                : 'Adicionar transação',
+                ? 'Edit Transaction'
+                : 'Add Transaction',
           ),
           Positioned(
             top: 164.h,

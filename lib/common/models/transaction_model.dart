@@ -29,8 +29,8 @@ class TransactionModel {
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
-      description: map['Descrição'] as String,
-      category: map['Categoria'] as String,
+      description: map['description'] as String,
+      category: map['category'] as String,
       value: double.tryParse(map['value'].toString()) ?? 0,
       date: DateTime.parse(map['date'] as String).millisecondsSinceEpoch,
       status: map['status'] as bool,

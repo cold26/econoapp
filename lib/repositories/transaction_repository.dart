@@ -9,7 +9,6 @@ import '../common/models/balances_model.dart';
 import '../common/models/transaction_model.dart';
 import '../locator.dart';
 
-
 abstract class TransactionRepository {
   Future<bool> addTransaction(
     TransactionModel transactionModel,
