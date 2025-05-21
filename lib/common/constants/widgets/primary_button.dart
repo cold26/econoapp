@@ -2,17 +2,15 @@ import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
-
-
 class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String text;
 
   const PrimaryButton({
-    super.key,
+    Key? key,
     this.onPressed,
     required this.text,
-  });
+  }) : super(key: key);
 
   final BorderRadius _borderRadius =
       const BorderRadius.all(Radius.circular(24.0));
@@ -20,6 +18,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.transparent,
       child: Ink(
         height: 48.0,
         decoration: BoxDecoration(

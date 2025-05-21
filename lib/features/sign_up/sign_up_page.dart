@@ -79,14 +79,14 @@ class _SignUpPageState extends State<SignUpPage> {
       body: ListView(
         children: [
           Text(
-            'Spend Smarter',
+            'Comce a Economizar',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
             ),
           ),
           Text(
-            'Save More',
+            'Seu dinheiro!',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
@@ -101,26 +101,26 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 CustomTextFormField(
                   controller: _nameController,
-                  labelText: "your name",
-                  hintText: "JOHN DOE",
+                  labelText: "Seu nome",
+                  hintText: "Digite seu nome",
                   validator: Validator.validateName,
                 ),
                 CustomTextFormField(
                   controller: _emailController,
-                  labelText: "your email",
-                  hintText: "john@email.com",
+                  labelText: "Seu email",
+                  hintText: "Digite seu email",
                   validator: Validator.validateEmail,
                 ),
                 PasswordFormField(
                   controller: _passwordController,
-                  labelText: "choose your password",
+                  labelText: "Escolha uma senha",
                   hintText: "*********",
                   validator: Validator.validatePassword,
                   helperText:
-                      "Must have at least 8 characters, 1 capital letter and 1 number.",
+                      "Deve ter pelo menos 8 caracteres, 1 letra maiúscula e 1 número.",
                 ),
                 PasswordFormField(
-                  labelText: "confirm your password",
+                  labelText: "Confirme sua senha",
                   hintText: "*********",
                   validator: (value) => Validator.validateConfirmPassword(
                     _passwordController.text,
@@ -138,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
               bottom: 4.0,
             ),
             child: PrimaryButton(
-              text: 'Sign Up',
+              text: 'Cadastrar',
               onPressed: () {
                 final valid = _formKey.currentState != null &&
                     _formKey.currentState!.validate();
@@ -161,13 +161,13 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             children: [
               Text(
-                'Already have account? ',
+                'Já possui uma conta? ',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.grey,
                 ),
               ),
               Text(
-                'Sign In ',
+                'Entrar',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.greenOne,
                 ),

@@ -20,18 +20,18 @@ class OnboardingPage extends StatelessWidget {
           const SizedBox(height: 48.0),
           Expanded(
             child: Image.asset(
-              'assets/images/onboarding_image.png',
+              'assets/images/Group 1.png',
             ),
           ),
           Text(
-            'Spend Smarter',
+            'Gaste De Forma',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
             ),
           ),
           Text(
-            'Save More',
+            'Inteligente.',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
@@ -45,7 +45,7 @@ class OnboardingPage extends StatelessWidget {
               bottom: 4.0,
             ),
             child: PrimaryButton(
-              text: 'Get Started',
+              text: 'Comece Agora',
               onPressed: () {
                 Navigator.pushNamed(
                   context,
@@ -58,13 +58,13 @@ class OnboardingPage extends StatelessWidget {
             onPressed: () => Navigator.pushNamed(context, NamedRoute.signIn),
             children: [
               Text(
-                'Already have account? ',
+                'Já é cadastrado? ',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.grey,
                 ),
               ),
               Text(
-                'Sign In ',
+                'Entre',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.greenOne,
                 ),

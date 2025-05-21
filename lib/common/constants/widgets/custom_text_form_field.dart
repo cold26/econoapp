@@ -1,6 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+
 
 class CustomTextFormField extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
@@ -9,24 +14,34 @@ class CustomTextFormField extends StatefulWidget {
   final TextCapitalization? textCapitalization;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final int? maxLength;
+  final TextInputAction? textInputAction;
   final Widget? suffixIcon;
   final bool? obscureText;
-  final FormFieldValidator<String>? validator; 
+  final List<TextInputFormatter>? inputFormatters;
+  final FormFieldValidator<String>? validator;
   final String? helperText;
+  final GestureTapCallback? onTap;
+  final bool readOnly;
 
   const CustomTextFormField({
-    super.key,
+    Key? key,
     this.padding,
     this.hintText,
     this.labelText,
-    this.textCapitalization, 
-    this.controller, 
+    this.textCapitalization,
+    this.controller,
     this.keyboardType,
-    this.suffixIcon, 
+    this.maxLength,
+    this.textInputAction,
+    this.suffixIcon,
     this.obscureText,
-     this.validator,
+    this.inputFormatters,
+    this.validator,
     this.helperText,
-  });
+    this.onTap,
+    this.readOnly = false,
+  }) : super(key: key);
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -34,13 +49,14 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   final defaultBorder = const OutlineInputBorder(
-    borderSide: BorderSide(color: AppColors.greenTwo),
+    borderSide: BorderSide(
+      color: AppColors.greenOne,
+    ),
   );
 
+  String? _helperText;
 
-String? _helperText;
-
-@override
+  @override
   void initState() {
     super.initState();
     _helperText = widget.helperText;
@@ -49,53 +65,43 @@ String? _helperText;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          widget.padding ??
+      padding: widget.padding ??
           const EdgeInsets.symmetric(
             horizontal: 24.0,
-             vertical: 12.0),
+            vertical: 12.0,
+          ),
       child: TextFormField(
-        onChanged: (value){
-          if(value.length == 1){
+        readOnly: widget.readOnly,
+        onTap: widget.onTap,
+        onChanged: (value) {
+          if (value.length == 1) {
             setState(() {
               _helperText = null;
             });
-          } else if(value.isEmpty){
+          } else if (value.isEmpty) {
             setState(() {
               _helperText = widget.helperText;
             });
           }
         },
         validator: widget.validator,
+        style: AppTextStyles.inputText.copyWith(color: AppColors.greenOne),
+        inputFormatters: widget.inputFormatters,
         obscureText: widget.obscureText ?? false,
-        textInputAction: TextInputAction.done,
+        textInputAction: widget.textInputAction,
+        maxLength: widget.maxLength,
         keyboardType: widget.keyboardType,
         controller: widget.controller,
         textCapitalization:
-          widget.textCapitalization ?? TextCapitalization.none,
-          decoration: InputDecoration(
-            helperText: _helperText,
-            helperMaxLines: 3,
+            widget.textCapitalization ?? TextCapitalization.none,
+        decoration: InputDecoration(
+          errorMaxLines: 3,
+          helperText: _helperText,
+          helperMaxLines: 3,
           suffixIcon: widget.suffixIcon,
           hintText: widget.hintText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           labelText: widget.labelText?.toUpperCase(),
-          labelStyle: AppTextStyles.inputLabelText.copyWith(
-            color: AppColors.grey,
-          ),
-          hintStyle: AppTextStyles.inputLabelText.copyWith(
-            color: AppColors.grey, // Cor suave para hintText
-          ),
-          border: defaultBorder,
-          focusedBorder: defaultBorder,
-          errorBorder: defaultBorder.copyWith(
-            borderSide: const BorderSide(color: Colors.red),
-          ),
-          focusedErrorBorder: defaultBorder.copyWith(
-            borderSide: const BorderSide(color: Colors.red),
-          ),
-          enabledBorder: defaultBorder,
-          disabledBorder: defaultBorder,
         ),
       ),
     );
