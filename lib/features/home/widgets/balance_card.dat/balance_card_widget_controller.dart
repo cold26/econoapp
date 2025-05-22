@@ -1,15 +1,15 @@
 import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget.state.dart';
-import 'package:econoapp/repositories/transaction_repository.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../common/models/balances_model.dart';
-
+import '../../../../repositories/transaction_repository.dart';
 
 class BalanceCardWidgetController extends ChangeNotifier {
-  final TransactionRepository transactionRepository;
   BalanceCardWidgetController({
     required this.transactionRepository,
   });
+
+  final TransactionRepository transactionRepository;
 
   BalanceCardWidgetState _state = BalanceCardWidgetStateInitial();
 

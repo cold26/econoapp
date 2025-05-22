@@ -7,15 +7,15 @@ import 'package:flutter/foundation.dart';
 import 'sign_in_state.dart';
 
 class SignInController extends ChangeNotifier {
-  final AuthService authService;
-  final SecureStorage secureStorage;
-  final GraphQLService graphQLService;
-
   SignInController({
     required this.authService,
-    required this.secureStorage,
+    required this.secureStorageService,
     required this.graphQLService,
   });
+
+  final AuthService authService;
+  final SecureStorageService secureStorageService;
+  final GraphQLService graphQLService;
 
   SignInState _state = SignInStateInitial();
 
@@ -39,7 +39,8 @@ class SignInController extends ChangeNotifier {
       );
 
       if (user.id != null) {
-        await secureStorage.write(key: "CURRENT_USER", value: user.toJson());
+        await secureStorageService.write(
+            key: "CURRENT_USER", value: user.toJson());
 
         await graphQLService.init();
 

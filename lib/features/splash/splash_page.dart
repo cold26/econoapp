@@ -1,4 +1,4 @@
-import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
+import 'package:econoapp/common/widgets/custom_circular_progress_indicator.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app_colors.dart';

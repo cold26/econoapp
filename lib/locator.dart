@@ -3,13 +3,16 @@ import 'package:econoapp/common/services/firebase_auth_service.dart';
 import 'package:econoapp/common/services/graphql_service.dart';
 import 'package:econoapp/common/services/secure_storage.dart';
 import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget_controller.dart';
+import 'package:econoapp/features/transactions/transactions_controller.dart';
 import 'package:get_it/get_it.dart';
 
 import 'features/home/home_controller.dart';
 import 'features/sign_in/sign_in_controller.dart';
 import 'features/sign_up/sign_up_controller.dart';
 import 'features/splash/splash_controller.dart';
+import 'features/wallet/wallet_controller.dart';
 import 'repositories/transaction_repository.dart';
+
 
 final locator = GetIt.instance;
 
@@ -23,7 +26,7 @@ void setupDependencies() {
 
   locator.registerFactory<SplashController>(
     () => SplashController(
-      secureStorage: const SecureStorage(),
+      secureStorageService: const SecureStorageService(),
       graphQLService: locator.get<GraphQLService>(),
     ),
   );
@@ -31,7 +34,7 @@ void setupDependencies() {
   locator.registerFactory<SignInController>(
     () => SignInController(
       authService: locator.get<AuthService>(),
-      secureStorage: const SecureStorage(),
+      secureStorageService: const SecureStorageService(),
       graphQLService: locator.get<GraphQLService>(),
     ),
   );
@@ -39,7 +42,7 @@ void setupDependencies() {
   locator.registerFactory<SignUpController>(
     () => SignUpController(
       authService: locator.get<AuthService>(),
-      secureStorage: const SecureStorage(),
+      secureStorageService: const SecureStorageService(),
       graphQLService: locator.get<GraphQLService>(),
     ),
   );
@@ -47,11 +50,24 @@ void setupDependencies() {
   locator.registerFactory<TransactionRepository>(
       () => TransactionRepositoryImpl());
 
-  locator.registerLazySingleton<HomeController>(
-      () => HomeController(locator.get<TransactionRepository>()));
+  locator.registerLazySingleton<HomeController>(() => HomeController(
+      transactionRepository: locator.get<TransactionRepository>()));
 
   locator.registerLazySingleton<BalanceCardWidgetController>(
     () => BalanceCardWidgetController(
+      transactionRepository: locator.get<TransactionRepository>(),
+    ),
+  );
+
+  locator.registerFactory<TransactionController>(
+    () => TransactionController(
+      transactionRepository: locator.get<TransactionRepository>(),
+      storage: const SecureStorageService(),
+    ),
+  );
+
+  locator.registerLazySingleton(
+    () => WalletController(
       transactionRepository: locator.get<TransactionRepository>(),
     ),
   );

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 import 'package:econoapp/common/constants/app_colors.dart';
-import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
+import 'package:econoapp/common/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class PasswordFormField extends StatefulWidget {

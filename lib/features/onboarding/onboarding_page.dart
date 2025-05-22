@@ -3,8 +3,8 @@
 import 'package:econoapp/common/constants/app_colors.dart';
 import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:econoapp/common/constants/routes.dart';
-import 'package:econoapp/common/constants/widgets/multi_text_button.dart';
-import 'package:econoapp/common/constants/widgets/primary_button.dart';
+import 'package:econoapp/common/widgets/multi_text_button.dart';
+import 'package:econoapp/common/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 

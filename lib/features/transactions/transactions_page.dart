@@ -1,11 +1,6 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:econoapp/common/constants/widgets/app_header.dart';
-import 'package:econoapp/common/constants/widgets/custom_circular_progress_indicator.dart';
-import 'package:econoapp/common/constants/widgets/custom_text_form_field.dart';
-import 'package:econoapp/common/constants/widgets/primary_button.dart';
-import 'package:econoapp/common/services/secure_storage.dart';
 import 'package:econoapp/features/transactions/transactions_controller.dart';
 import 'package:econoapp/features/transactions/transactions_state.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +11,11 @@ import '../../common/extensions/date_formatter.dart';
 import '../../common/extensions/sizes.dart';
 import '../../common/models/transaction_model.dart';
 import '../../common/utils/money_mask_controller.dart';
+import '../../common/widgets/app_header.dart';
+import '../../common/widgets/custom_circular_progress_indicator.dart';
+import '../../common/widgets/custom_text_form_field.dart';
+import '../../common/widgets/primary_button.dart';
 import '../../locator.dart';
-import '../../repositories/transaction_repository.dart';
 
 
 class TransactionPage extends StatefulWidget {
@@ -33,17 +31,13 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage>
     with SingleTickerProviderStateMixin {
-  final _transactionController = TransactionController(
-    repository: locator.get<TransactionRepository>(),
-    storage: const SecureStorage(),
-  );
+  final _transactionController = locator.get<TransactionController>();
 
   final _formKey = GlobalKey<FormState>();
 
-  final _incomes = ['Serviços', 'Investimento', 'Outros'];
-  final _outcomes = [
-'Casa', 'Supermercado', 'Outro'];
-  DateTime? _date;
+  final _incomes = ['Services', 'Investment', 'Other'];
+  final _outcomes = ['House', 'Grocery', 'Other'];
+  DateTime? _newDate;
   bool value = false;
 
   final _descriptionController = TextEditingController();
@@ -63,13 +57,24 @@ class _TransactionPageState extends State<TransactionPage>
     return 0;
   }
 
+  String get _date {
+    if (widget.transaction?.date != null) {
+      return DateTime.fromMillisecondsSinceEpoch(widget.transaction!.date)
+          .toText;
+    } else {
+      return '';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _amountController.updateValue(widget.transaction?.value ?? 0);
+    value = widget.transaction?.status ?? false;
     _descriptionController.text = widget.transaction?.description ?? '';
     _categoryController.text = widget.transaction?.category ?? '';
-    _date = DateTime.fromMillisecondsSinceEpoch(widget.transaction?.date ?? 0);
+    _newDate =
+        DateTime.fromMillisecondsSinceEpoch(widget.transaction?.date ?? 0);
     _dateController.text = widget.transaction?.date != null
         ? DateTime.fromMillisecondsSinceEpoch(widget.transaction!.date).toText
         : '';
@@ -88,7 +93,7 @@ class _TransactionPageState extends State<TransactionPage>
         );
       }
       if (_transactionController.state is TransactionStateSuccess) {
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       }
     });
   }
@@ -100,6 +105,7 @@ class _TransactionPageState extends State<TransactionPage>
     _descriptionController.dispose();
     _categoryController.dispose();
     _dateController.dispose();
+    _transactionController.dispose();
     super.dispose();
   }
 
@@ -157,7 +163,7 @@ class _TransactionPageState extends State<TransactionPage>
                                     ),
                                   ),
                                   child: Text(
-                                    'Recebimentos',
+                                    'Income',
                                     style: AppTextStyles.mediumText16w500
                                         .apply(color: AppColors.darkGrey),
                                   ),
@@ -175,7 +181,7 @@ class _TransactionPageState extends State<TransactionPage>
                                     ),
                                   ),
                                   child: Text(
-                                    'Despesas',
+                                    'Expense',
                                     style: AppTextStyles.mediumText16w500
                                         .apply(color: AppColors.darkGrey),
                                   ),
@@ -190,7 +196,7 @@ class _TransactionPageState extends State<TransactionPage>
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _amountController,
                         keyboardType: TextInputType.number,
-                        labelText: "Valor",
+                        labelText: "Amount",
                         hintText: "Type an amount",
                         suffixIcon: StatefulBuilder(
                           builder: (context, setState) {
@@ -216,10 +222,10 @@ class _TransactionPageState extends State<TransactionPage>
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _descriptionController,
                         labelText: 'Description',
-                        hintText: 'Adicione uma descrição',
+                        hintText: 'Add a description',
                         validator: (value) {
                           if (_descriptionController.text.isEmpty) {
-                            return 'Esse campo não pode estar vazio.';
+                            return 'This field cannot be empty.';
                           }
                           return null;
                         },
@@ -229,10 +235,10 @@ class _TransactionPageState extends State<TransactionPage>
                         controller: _categoryController,
                         readOnly: true,
                         labelText: "Category",
-                        hintText: "Selecione a categoria",
+                        hintText: "Select a category",
                         validator: (value) {
                           if (_categoryController.text.isEmpty) {
-                            return 'Esse campo não pode estar vazio.';
+                            return 'This field cannot be empty.';
                           }
                           return null;
                         },
@@ -262,38 +268,38 @@ class _TransactionPageState extends State<TransactionPage>
                         controller: _dateController,
                         readOnly: true,
                         labelText: "Date",
-                        hintText: "Selecione a data",
+                        hintText: "Select a date",
                         validator: (value) {
                           if (_dateController.text.isEmpty) {
-                            return 'Esse campo não pode estar vazio.';
+                            return 'This field cannot be empty.';
                           }
                           return null;
                         },
                         onTap: () async {
-                          _date = await showDatePicker(
+                          _newDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(1970),
                             lastDate: DateTime(2030),
                           );
 
-                          _date = _date?.microsecondsSinceEpoch != 0
+                          _newDate = _newDate != null
                               ? DateTime.now().copyWith(
-                                  day: _date?.day,
-                                  month: _date?.month,
-                                  year: _date?.year,
+                                  day: _newDate?.day,
+                                  month: _newDate?.month,
+                                  year: _newDate?.year,
                                 )
                               : null;
 
                           _dateController.text =
-                              _date != null ? _date!.toText : '';
+                              _newDate != null ? _newDate!.toText : _date;
                         },
                       ),
                       const SizedBox(height: 16.0),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: PrimaryButton(
-                          text: widget.transaction != null ? 'Salvar' : 'Adicionar',
+                          text: widget.transaction != null ? 'Save' : 'Add',
                           onPressed: () async {
                             FocusScope.of(context).unfocus();
                             if (_formKey.currentState!.validate()) {
@@ -308,8 +314,8 @@ class _TransactionPageState extends State<TransactionPage>
                                 value: _tabController.index == 1
                                     ? newValue * -1
                                     : newValue,
-                                date: _date != null
-                                    ? _date!.millisecondsSinceEpoch
+                                date: _newDate != null
+                                    ? _newDate!.millisecondsSinceEpoch
                                     : DateTime.now().millisecondsSinceEpoch,
                                 status: value,
                                 id: widget.transaction?.id,
@@ -322,14 +328,14 @@ class _TransactionPageState extends State<TransactionPage>
                                 await _transactionController
                                     .updateTransaction(newTransaction);
                                 if (mounted) {
-                                  Navigator.pop(context, true);
+                                  Navigator.of(context).pop(true);
                                 }
                               } else {
                                 await _transactionController.addTransaction(
                                   newTransaction,
                                 );
                                 if (mounted) {
-                                  Navigator.pop(context, true);
+                                  Navigator.of(context).pop(true);
                                 }
                               }
                             } else {
