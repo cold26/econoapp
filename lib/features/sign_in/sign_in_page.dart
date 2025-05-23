@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage> with CustomModalSheetMixin {
       body: ListView(
         children: [
           Text(
-            'Welcome Back!',
+            'Bem vindo de volta!',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
@@ -91,17 +91,17 @@ class _SignInPageState extends State<SignInPage> with CustomModalSheetMixin {
               children: [
                 CustomTextFormField(
                   controller: _emailController,
-                  labelText: "your email",
-                  hintText: "john@email.com",
+                  labelText: "Seu email",
+                  hintText: "Digite seu email",
                   validator: Validator.validateEmail,
                 ),
                 PasswordFormField(
                   controller: _passwordController,
-                  labelText: "your password",
+                  labelText: "Sua senha",
                   hintText: "*********",
                   validator: Validator.validatePassword,
                   helperText:
-                      "Must have at least 8 characters, 1 capital letter and 1 number.",
+                      "Deve ter pelo menos 8 caracteres, 1 letra maiúscula e 1 número.",
                 ),
               ],
             ),
@@ -136,7 +136,7 @@ class _SignInPageState extends State<SignInPage> with CustomModalSheetMixin {
             ),
             children: [
               Text(
-                'Don\'t have account? ',
+                'Não possui uma conta? ',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.grey,
                 ),

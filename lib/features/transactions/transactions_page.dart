@@ -129,7 +129,7 @@ class _TransactionPageState extends State<TransactionPage>
           AppHeader(
             title: widget.transaction != null
                 ? 'Edit Transaction'
-                : 'Add Transaction',
+                : 'Adicionar Transação',
           ),
           Positioned(
             top: 164.h,
@@ -208,7 +208,7 @@ class _TransactionPageState extends State<TransactionPage>
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _amountController,
                         keyboardType: TextInputType.number,
-                        labelText: "Amount",
+                        labelText: "Valor",
                         hintText: "Type an amount",
                         suffixIcon: StatefulBuilder(
                           builder: (context, setState) {
@@ -233,8 +233,8 @@ class _TransactionPageState extends State<TransactionPage>
                       CustomTextFormField(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _descriptionController,
-                        labelText: 'Description',
-                        hintText: 'Add a description',
+                        labelText: 'Descrição',
+                        hintText: 'Adicione uma descrição',
                         validator: (value) {
                           if (_descriptionController.text.isEmpty) {
                             return 'This field cannot be empty.';
@@ -247,7 +247,7 @@ class _TransactionPageState extends State<TransactionPage>
                         controller: _categoryController,
                         readOnly: true,
                         labelText: "Category",
-                        hintText: "Select a category",
+                        hintText: "Selecione a categoria",
                         validator: (value) {
                           if (_categoryController.text.isEmpty) {
                             return 'This field cannot be empty.';
@@ -281,7 +281,7 @@ class _TransactionPageState extends State<TransactionPage>
                         readOnly: true,
                         suffixIcon: const Icon(Icons.calendar_month_outlined),
                         labelText: "Date",
-                        hintText: "Select a date",
+                        hintText: "Selecione a data",
                         validator: (value) {
                           if (_dateController.text.isEmpty) {
                             return 'This field cannot be empty.';
