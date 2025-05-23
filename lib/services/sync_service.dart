@@ -225,11 +225,10 @@ class SyncService {
           throw const SyncException(code: 'error');
       }
 
-      // VERIFICAÇÃO EXTRA para garantir que a resposta não está vazia
+      // VERIFICAÇÃO EXTRA ajustada: só loga, não lança exceção
       if (response.isEmpty) {
-        log('GraphQL response is empty for transaction ID: ${localTransaction.id}', name: 'ERROR');
-        log('Transaction data sent: ${localTransaction.toMap()}', name: 'ERROR');
-        throw const SyncException(code: 'error');
+        log('GraphQL response is empty for transaction ID: ${localTransaction.id}', name: 'WARNING');
+        log('Transaction data sent: ${localTransaction.toMap()}', name: 'WARNING');
       }
     } catch (e, stackTrace) {
       log('_syncLocalTransactionsToServer exception $e', name: 'ERROR');
