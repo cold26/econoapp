@@ -13,7 +13,7 @@ class ConnectionService {
 
   Future<void> checkConnection() async {
     try {
-      final response = await _client.get(Uri.parse('https://example.com'));
+      final response = await _client.get(Uri.parse('https://arriving-tick-95.hasura.app/v1/graphql'));
 
       _isConnected = response.statusCode == 200;
     } catch (_) {
