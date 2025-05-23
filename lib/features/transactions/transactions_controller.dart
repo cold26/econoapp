@@ -1,10 +1,10 @@
 import 'package:econoapp/common/services/secure_storage.dart';
 import 'package:econoapp/features/transactions/transactions_state.dart';
+import 'package:econoapp/repositories/transaction_repository.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../common/models/transaction_model.dart';
 import '../../common/models/user_model.dart';
-import '../../repositories/transaction_repository.dart';
 
 
 class TransactionController extends ChangeNotifier {
@@ -41,12 +41,13 @@ class TransactionController extends ChangeNotifier {
         throw Exception('error');
       }
     } catch (e) {
-      _changeState(TransactionStateError());
+      _changeState(TransactionStateError(message: e.toString()));
     }
   }
 
   Future<void> updateTransaction(TransactionModel transaction) async {
     _changeState(TransactionStateLoading());
+    await Future.delayed(const Duration(seconds: 2));
     try {
       final result = await transactionRepository.updateTransaction(transaction);
 
@@ -56,7 +57,7 @@ class TransactionController extends ChangeNotifier {
         throw Exception('error');
       }
     } catch (e) {
-      _changeState(TransactionStateError());
+      _changeState(TransactionStateError(message: e.toString()));
     }
   }
 }

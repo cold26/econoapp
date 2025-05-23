@@ -1,19 +1,17 @@
 import 'package:econoapp/common/services/auth_service.dart';
-import 'package:econoapp/common/services/graphql_service.dart';
 import 'package:econoapp/common/services/secure_storage.dart';
 import 'package:flutter/foundation.dart';
+
 import 'sign_up_state.dart';
 
 class SignUpController extends ChangeNotifier {
   SignUpController({
     required this.authService,
     required this.secureStorageService,
-    required this.graphQLService,
   });
 
   final AuthService authService;
   final SecureStorageService secureStorageService;
-  final GraphQLService graphQLService;
 
   SignUpState _state = SignUpStateInitial();
 
@@ -42,8 +40,6 @@ class SignUpController extends ChangeNotifier {
           key: "CURRENT_USER",
           value: user.toJson(),
         );
-
-        await graphQLService.init();
 
         _changeState(SignUpStateSuccess());
       } else {

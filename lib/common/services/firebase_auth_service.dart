@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:econoapp/common/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,9 +53,6 @@ class FirebaseAuthService implements AuthService {
       );
 
       if (result.user != null) {
-  
-        log(await _auth.currentUser?.getIdToken(true) ?? 'null');
-        await result.user!.updateDisplayName(name);
         return UserModel(
           name: _auth.currentUser?.displayName,
           email: _auth.currentUser?.email,
@@ -91,10 +86,10 @@ class FirebaseAuthService implements AuthService {
       if (token != null) {
         return token;
       } else {
-        throw Exception('user not found');
+        return '';
       }
     } catch (e) {
-      rethrow;
+      return '';
     }
   }
 }

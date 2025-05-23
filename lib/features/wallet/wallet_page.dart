@@ -1,3 +1,4 @@
+import 'package:econoapp/common/widgets/transaction_listview.dart';
 import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget.state.dart';
 import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget_controller.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import '../../common/extensions/sizes.dart';
 import '../../common/widgets/app_header.dart';
 import '../../common/widgets/base_page.dart';
 import '../../common/widgets/custom_circular_progress_indicator.dart';
-import '../../common/widgets/transaction_listview.dart';
 import '../../locator.dart';
 import '../home/home_controller.dart';
 import 'wallet_controller.dart';
@@ -35,6 +35,7 @@ class _WalletPageState extends State<WalletPage>
       vsync: this,
     );
     walletController.getAllTransactions();
+    ballanceController.getBalances();
   }
 
   @override
@@ -162,6 +163,7 @@ class _WalletPageState extends State<WalletPage>
                               walletController.transactions.isNotEmpty) {
                             return TransactionListView(
                               transactionList: walletController.transactions,
+                              itemCount: walletController.transactions.length,
                               isLoading: walletController.isLoading,
                               onLoading: (value) {
                                 if (value) {

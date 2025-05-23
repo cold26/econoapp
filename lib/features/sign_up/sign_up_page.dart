@@ -1,21 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
-import 'package:econoapp/common/constants/app_colors.dart';
-import 'package:econoapp/common/constants/app_text_styles.dart';
 import 'package:econoapp/common/constants/routes.dart';
-import 'package:econoapp/common/widgets/custom_bottom_sheet.dart';
-import 'package:econoapp/common/widgets/custom_circular_progress_indicator.dart';
-import 'package:econoapp/common/widgets/custom_text_form_field.dart';
-import 'package:econoapp/common/widgets/multi_text_button.dart';
-import 'package:econoapp/common/widgets/password_form_field.dart';
-import 'package:econoapp/common/widgets/primary_button.dart';
+import 'package:econoapp/common/utils/uppercase_text_formatter.dart';
 import 'package:econoapp/common/utils/validator.dart';
+import 'package:econoapp/common/widgets/custom_circular_progress_indicator.dart';
+import 'package:econoapp/common/widgets/password_form_field.dart';
 import 'package:econoapp/features/sign_up/sign_up_controller.dart';
 import 'package:econoapp/features/sign_up/sign_up_state.dart';
 import 'package:econoapp/locator.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/constants/app_colors.dart';
+import '../../common/constants/app_text_styles.dart';
+import '../../common/widgets/custom_bottom_sheet.dart';
+import '../../common/widgets/custom_text_form_field.dart';
+import '../../common/widgets/multi_text_button.dart';
+import '../../common/widgets/primary_button.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -24,7 +25,7 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage> with CustomModalSheetMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -63,8 +64,8 @@ class _SignUpPageState extends State<SignUpPage> {
         if (_controller.state is SignUpStateError) {
           final error = _controller.state as SignUpStateError;
           Navigator.pop(context);
-          customModalBottomSheet(
-            context,
+          showCustomModalBottomSheet(
+            context: context,
             content: error.message,
             buttonText: "Tentar novamente",
           );
@@ -79,14 +80,14 @@ class _SignUpPageState extends State<SignUpPage> {
       body: ListView(
         children: [
           Text(
-            'Comce a Economizar',
+            'Spend Smarter',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
             ),
           ),
           Text(
-            'Seu dinheiro!',
+            'Save More',
             textAlign: TextAlign.center,
             style: AppTextStyles.mediumText36.copyWith(
               color: AppColors.greenOne,
@@ -101,26 +102,29 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 CustomTextFormField(
                   controller: _nameController,
-                  labelText: "Seu nome",
-                  hintText: "Digite seu nome",
+                  labelText: "your name",
+                  hintText: "JOHN DOE",
+                  inputFormatters: [
+                    UpperCaseTextInputFormatter(),
+                  ],
                   validator: Validator.validateName,
                 ),
                 CustomTextFormField(
                   controller: _emailController,
-                  labelText: "Seu email",
-                  hintText: "Digite seu email",
+                  labelText: "your email",
+                  hintText: "john@email.com",
                   validator: Validator.validateEmail,
                 ),
                 PasswordFormField(
                   controller: _passwordController,
-                  labelText: "Escolha uma senha",
+                  labelText: "choose your password",
                   hintText: "*********",
                   validator: Validator.validatePassword,
                   helperText:
-                      "Deve ter pelo menos 8 caracteres, 1 letra maiúscula e 1 número.",
+                      "Must have at least 8 characters, 1 capital letter and 1 number.",
                 ),
                 PasswordFormField(
-                  labelText: "Confirme sua senha",
+                  labelText: "confirm your password",
                   hintText: "*********",
                   validator: (value) => Validator.validateConfirmPassword(
                     _passwordController.text,
@@ -138,7 +142,7 @@ class _SignUpPageState extends State<SignUpPage> {
               bottom: 4.0,
             ),
             child: PrimaryButton(
-              text: 'Cadastrar',
+              text: 'Sign Up',
               onPressed: () {
                 final valid = _formKey.currentState != null &&
                     _formKey.currentState!.validate();
@@ -161,13 +165,13 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             children: [
               Text(
-                'Já possui uma conta? ',
+                'Already have account? ',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.grey,
                 ),
               ),
               Text(
-                'Entrar',
+                'Sign In ',
                 style: AppTextStyles.smallText.copyWith(
                   color: AppColors.greenOne,
                 ),
