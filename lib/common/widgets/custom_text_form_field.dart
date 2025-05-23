@@ -25,7 +25,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool readOnly;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     this.padding,
     this.hintText,
     this.labelText,
@@ -41,7 +41,7 @@ class CustomTextFormField extends StatefulWidget {
     this.helperText,
     this.onTap,
     this.readOnly = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();

@@ -29,7 +29,9 @@ void main() {
       when(() => mockSecureStorage.write(
             key: "CURRENT_USER",
             value: user.toJson(),
-          )).thenAnswer((_) async {});
+          )).thenAnswer((_) async {
+            return null;
+          });
 
       when(
         () => mockFirebaseAuthService.signIn(
@@ -55,7 +57,9 @@ void main() {
           key: "CURRENT_USER",
           value: user.toJson(),
         ),
-      ).thenAnswer((_) async {});
+      ).thenAnswer((_) async {
+        return null;
+      });
 
       when(
         () => mockFirebaseAuthService.signIn(

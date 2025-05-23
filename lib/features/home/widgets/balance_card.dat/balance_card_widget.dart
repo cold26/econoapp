@@ -1,21 +1,20 @@
 import 'dart:developer';
 
-import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget.state.dart';
+import 'package:econoapp/common/constants/app_colors.dart';
+import 'package:econoapp/common/constants/app_text_styles.dart';
+import 'package:econoapp/common/extensions/extensions.dart';
+import 'package:econoapp/features/balance/balance_controller.dart';
+import 'package:econoapp/features/balance/balance_state.dart';
+
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/app_colors.dart';
-import '../../../../common/constants/app_text_styles.dart';
-import '../../../../common/extensions/sizes.dart';
-import 'balance_card_widget_controller.dart';
-
-
-class BalanceCard extends StatelessWidget {
-  const BalanceCard({
+class BalanceCardWidget extends StatelessWidget {
+  const BalanceCardWidget({
     Key? key,
     required this.controller,
   }) : super(key: key);
 
-  final BalanceCardWidgetController controller;
+  final BalanceController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,7 @@ class BalanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Saldo total',
+                      'Saldo Total',
                       textScaleFactor: textScaleFactor,
                       style: AppTextStyles.mediumText16w600
                           .apply(color: AppColors.white),
@@ -56,8 +55,7 @@ class BalanceCard extends StatelessWidget {
                     AnimatedBuilder(
                         animation: controller,
                         builder: (context, _) {
-                          if (controller.state
-                              is BalanceCardWidgetStateLoading) {
+                          if (controller.state is BalanceStateLoading) {
                             return Container(
                               color: AppColors.greenTwo,
                               constraints:
@@ -138,7 +136,7 @@ class TransactionValueWidget extends StatelessWidget {
     required this.controller,
     this.type = TransactionType.income,
   });
-  final BalanceCardWidgetController controller;
+  final BalanceController controller;
   final double amount;
   final TransactionType type;
 
@@ -174,7 +172,7 @@ class TransactionValueWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              type == TransactionType.income ? 'Recebimento' : 'Despesa',
+              type == TransactionType.income ? 'Recebimentos' : 'Despesas',
               textScaleFactor: textScaleFactor,
               style:
                   AppTextStyles.mediumText16w500.apply(color: AppColors.white),
@@ -182,7 +180,7 @@ class TransactionValueWidget extends StatelessWidget {
             AnimatedBuilder(
                 animation: controller,
                 builder: (context, _) {
-                  if (controller.state is BalanceCardWidgetStateLoading) {
+                  if (controller.state is BalanceStateLoading) {
                     return Container(
                       color: AppColors.greenTwo,
                       constraints: BoxConstraints.tightFor(width: 80.0.w),

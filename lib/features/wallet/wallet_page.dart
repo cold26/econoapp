@@ -1,14 +1,11 @@
-import 'package:econoapp/common/widgets/transaction_listview.dart';
-import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget.state.dart';
-import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget_controller.dart';
+import 'package:econoapp/common/widgets/transaction_list_view.dart';
+import 'package:econoapp/features/balance/balance_controller.dart';
+import 'package:econoapp/features/balance/balance_state.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/constants/app_colors.dart';
-import '../../common/constants/app_text_styles.dart';
-import '../../common/extensions/sizes.dart';
-import '../../common/widgets/app_header.dart';
-import '../../common/widgets/base_page.dart';
-import '../../common/widgets/custom_circular_progress_indicator.dart';
+import '../../common/constants/constants.dart';
+import '../../common/extensions/extensions.dart';
+import '../../common/widgets/widgets.dart';
 import '../../locator.dart';
 import '../home/home_controller.dart';
 import 'wallet_controller.dart';
@@ -22,9 +19,9 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, CustomModalSheetMixin {
+  final balanceController = locator.get<BalanceController>();
   final walletController = locator.get<WalletController>();
-  final ballanceController = locator.get<BalanceCardWidgetController>();
   late final TabController _tabController;
 
   @override
@@ -34,13 +31,32 @@ class _WalletPageState extends State<WalletPage>
       length: 2,
       vsync: this,
     );
+
     walletController.getAllTransactions();
-    ballanceController.getBalances();
+    balanceController.getBalances();
+
+    walletController.addListener(() {
+      if (walletController.state is WalletStateError) {
+        if (!mounted) return;
+
+        showCustomModalBottomSheet(
+          context: context,
+          content: (walletController.state as WalletStateError).message,
+          buttonText: 'Go to login',
+          isDismissible: false,
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+            context,
+            NamedRoute.signIn,
+            ModalRoute.withName(NamedRoute.initial),
+          ),
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
-    locator.resetLazySingleton<WalletController>();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -74,20 +90,20 @@ class _WalletPageState extends State<WalletPage>
                 child: Column(
                   children: [
                     Text(
-                      'Total Balance',
+                      'Saldo total',
                       style: AppTextStyles.inputLabelText
                           .apply(color: AppColors.grey),
                     ),
                     const SizedBox(height: 8.0),
                     AnimatedBuilder(
-                        animation: ballanceController,
+                        animation: balanceController,
                         builder: (context, _) {
-                          if (ballanceController.state
-                              is BalanceCardWidgetStateLoading) {
+                          if (balanceController.state is BalanceStateLoading) {
                             return const CustomCircularProgressIndicator();
                           }
+
                           return Text(
-                            '\$ ${ballanceController.balances.totalBalance.toStringAsFixed(2)}',
+                            '\$ ${balanceController.balances.totalBalance.toStringAsFixed(2)}',
                             style: AppTextStyles.mediumText30
                                 .apply(color: AppColors.blackGrey),
                           );
@@ -161,17 +177,16 @@ class _WalletPageState extends State<WalletPage>
                           }
                           if (walletController.state is WalletStateSuccess &&
                               walletController.transactions.isNotEmpty) {
-                            return TransactionListView(
+                            return TransactionListView.withCalendar(
                               transactionList: walletController.transactions,
                               itemCount: walletController.transactions.length,
-                              isLoading: walletController.isLoading,
-                              onLoading: (value) {
-                                if (value) {
-                                  walletController.fetchMore;
-                                }
+                              onChange: () {
+                                walletController.getAllTransactions().then(
+                                    (_) => balanceController.getBalances());
                               },
                             );
                           }
+
                           return const Center(
                             child:
                                 Text('There are no transactions at this time.'),

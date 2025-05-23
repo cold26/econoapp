@@ -1,10 +1,10 @@
-import 'package:econoapp/common/services/secure_storage.dart';
+import 'package:econoapp/common/models/transaction_model.dart';
+import 'package:econoapp/common/models/user_model.dart';
 import 'package:econoapp/features/transactions/transactions_state.dart';
-import 'package:econoapp/repositories/transaction_repository.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../common/models/transaction_model.dart';
-import '../../common/models/user_model.dart';
+import '../../../repositories/repositories.dart';
+import '../../../services/services.dart';
 
 
 class TransactionController extends ChangeNotifier {
@@ -27,37 +27,37 @@ class TransactionController extends ChangeNotifier {
 
   Future<void> addTransaction(TransactionModel transaction) async {
     _changeState(TransactionStateLoading());
-    try {
-      final data = await storage.readOne(key: 'CURRENT_USER');
-      final user = UserModel.fromJson(data ?? '');
-      final result = await transactionRepository.addTransaction(
-        transaction,
-        user.id!,
-      );
 
-      if (result) {
-        _changeState(TransactionStateSuccess());
-      } else {
-        throw Exception('error');
-      }
-    } catch (e) {
-      _changeState(TransactionStateError(message: e.toString()));
-    }
+    final data = await storage.readOne(key: 'CURRENT_USER');
+    final user = UserModel.fromJson(data ?? '');
+    final result = await transactionRepository.addTransaction(
+      transaction: transaction,
+      userId: user.id!,
+    );
+
+    result.fold(
+      (error) => _changeState(TransactionStateError(message: error.message)),
+      (data) => _changeState(TransactionStateSuccess()),
+    );
   }
 
   Future<void> updateTransaction(TransactionModel transaction) async {
     _changeState(TransactionStateLoading());
-    await Future.delayed(const Duration(seconds: 2));
-    try {
-      final result = await transactionRepository.updateTransaction(transaction);
+    final result = await transactionRepository.updateTransaction(transaction);
 
-      if (result) {
-        _changeState(TransactionStateSuccess());
-      } else {
-        throw Exception('error');
-      }
-    } catch (e) {
-      _changeState(TransactionStateError(message: e.toString()));
-    }
+    result.fold(
+      (error) => _changeState(TransactionStateError(message: error.message)),
+      (data) => _changeState(TransactionStateSuccess()),
+    );
+  }
+
+  Future<void> deleteTransaction(TransactionModel transaction) async {
+    _changeState(TransactionStateLoading());
+    final result = await transactionRepository.deleteTransaction(transaction);
+
+    result.fold(
+      (error) => _changeState(TransactionStateError(message: error.message)),
+      (data) => _changeState(TransactionStateSuccess()),
+    );
   }
 }

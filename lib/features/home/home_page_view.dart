@@ -1,4 +1,5 @@
-import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget_controller.dart';
+import 'package:econoapp/features/balance/balance_controller.dart';
+import 'package:econoapp/features/transactions/transactions_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app_colors.dart';
@@ -20,18 +21,21 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   final homeController = locator.get<HomeController>();
+  final walletController = locator.get<WalletController>();
+  final balanceController = locator.get<BalanceController>();
 
   @override
   void initState() {
-    homeController.setPageController = PageController();
     super.initState();
+    homeController.setPageController = PageController();
   }
 
   @override
   void dispose() {
     locator.resetLazySingleton<HomeController>();
-    locator.resetLazySingleton<BalanceCardWidgetController>();
+    locator.resetLazySingleton<BalanceController>();
     locator.resetLazySingleton<WalletController>();
+    locator.resetLazySingleton<TransactionController>();
     super.dispose();
   }
 
@@ -52,9 +56,13 @@ class _HomePageViewState extends State<HomePageView> {
         onPressed: () async {
           final result = await Navigator.pushNamed(context, '/transaction');
           if (result != null) {
-            homeController.getLatestTransactions();
-            locator.get<BalanceCardWidgetController>().getBalances();
-            locator.get<WalletController>().getAllTransactions();
+            if (homeController.pageController.page == 0) {
+              homeController.getLatestTransactions();
+            }
+            if (homeController.pageController.page == 2) {
+              walletController.getAllTransactions();
+            }
+            balanceController.getBalances();
           }
         },
         child: const Icon(Icons.add),

@@ -2,9 +2,9 @@
 import 'dart:developer';
 
 import 'package:econoapp/common/constants/routes.dart';
-import 'package:econoapp/common/utils/uppercase_text_formatter.dart';
+import 'package:econoapp/common/utils/uppercase_text_formatter.dart' show UpperCaseTextInputFormatter;
 import 'package:econoapp/common/utils/validator.dart';
-import 'package:econoapp/common/widgets/custom_circular_progress_indicator.dart';
+import 'package:econoapp/common/widgets/custom_circular_progress_indicator.dart' show CustomCircularProgressIndicator;
 import 'package:econoapp/common/widgets/password_form_field.dart';
 import 'package:econoapp/features/sign_up/sign_up_controller.dart';
 import 'package:econoapp/features/sign_up/sign_up_state.dart';
@@ -30,29 +30,29 @@ class _SignUpPageState extends State<SignUpPage> with CustomModalSheetMixin {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _controller = locator.get<SignUpController>();
+  final _signUpController = locator.get<SignUpController>();
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _controller.dispose();
+    _signUpController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(
+    _signUpController.addListener(
       () {
-        if (_controller.state is SignUpStateLoading) {
+        if (_signUpController.state is SignUpStateLoading) {
           showDialog(
             context: context,
             builder: (context) => const CustomCircularProgressIndicator(),
           );
         }
-        if (_controller.state is SignUpStateSuccess) {
+        if (_signUpController.state is SignUpStateSuccess) {
           Navigator.pop(context);
 
           Navigator.pushReplacementNamed(
@@ -61,13 +61,13 @@ class _SignUpPageState extends State<SignUpPage> with CustomModalSheetMixin {
           );
         }
 
-        if (_controller.state is SignUpStateError) {
-          final error = _controller.state as SignUpStateError;
+        if (_signUpController.state is SignUpStateError) {
+          final error = _signUpController.state as SignUpStateError;
           Navigator.pop(context);
           showCustomModalBottomSheet(
             context: context,
             content: error.message,
-            buttonText: "Tentar novamente",
+            buttonText: "Try again",
           );
         }
       },
@@ -147,7 +147,7 @@ class _SignUpPageState extends State<SignUpPage> with CustomModalSheetMixin {
                 final valid = _formKey.currentState != null &&
                     _formKey.currentState!.validate();
                 if (valid) {
-                  _controller.signUp(
+                  _signUpController.signUp(
                     name: _nameController.text,
                     email: _emailController.text,
                     password: _passwordController.text,

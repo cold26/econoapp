@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../features/home/widgets/greetings_widget.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
-import '../extensions/sizes.dart';
-import 'notification_widget.dart';
+import '../constants/constants.dart';
+import '../extensions/extensions.dart';
+import 'widgets.dart';
 
 class AppHeader extends StatefulWidget {
   final String? title;
@@ -12,11 +10,11 @@ class AppHeader extends StatefulWidget {
   final VoidCallback? onPressed;
 
   const AppHeader({
-    Key? key,
+    super.key,
     this.title,
     this.hasOptions = false,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<AppHeader> createState() => _AppHeaderState();

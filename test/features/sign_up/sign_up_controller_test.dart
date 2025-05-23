@@ -32,7 +32,9 @@ test('Testes sign Up Controller Success State', () async {
   when(() => mockSecureStorage.write(
     key: "CURRENT_USER",
     value: user.toJson(),
-  )).thenAnswer((_) async {});
+  )).thenAnswer((_) async {
+    return null;
+  });
 
   when(() => mockFirebaseAuthService.signUp(
       name: 'Usuario1',
@@ -56,7 +58,9 @@ test('Testes sign Up Controller Error State', () async {
   when(() => mockSecureStorage.write(
     key: "CURRENT_USER",
     value: user.toJson(),
-  )).thenAnswer((_) async {});
+  )).thenAnswer((_) async {
+    return null;
+  });
 
   when(() => mockFirebaseAuthService.signUp(
       name: 'Usuario1',

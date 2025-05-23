@@ -1,5 +1,6 @@
-import 'package:econoapp/common/services/auth_service.dart';
-import 'package:econoapp/common/services/secure_storage.dart';
+import 'package:econoapp/services/auth_service.dart';
+import 'package:econoapp/services/secure_storage.dart';
+import 'package:econoapp/services/sync_service.dart';
 import 'package:flutter/foundation.dart';
 
 import 'sign_in_state.dart';
@@ -8,10 +9,12 @@ class SignInController extends ChangeNotifier {
   SignInController({
     required this.authService,
     required this.secureStorageService,
+    required this.syncService,
   });
 
   final AuthService authService;
   final SecureStorageService secureStorageService;
+  final SyncService syncService;
 
   SignInState _state = SignInStateInitial();
 
@@ -28,22 +31,23 @@ class SignInController extends ChangeNotifier {
   }) async {
     _changeState(SignInStateLoading());
 
-    try {
-      final user = await authService.signIn(
-        email: email,
-        password: password,
-      );
+    final result = await authService.signIn(
+      email: email,
+      password: password,
+    );
 
-      if (user.id != null) {
+    result.fold(
+      (error) => _changeState(SignInStateError(error.message)),
+      (data) async {
         await secureStorageService.write(
-            key: "CURRENT_USER", value: user.toJson());
+          key: "CURRENT_USER",
+          value: data.toJson(),
+        );
+
+        await syncService.syncFromServer();
 
         _changeState(SignInStateSuccess());
-      } else {
-        throw Exception();
-      }
-    } catch (e) {
-      _changeState(SignInStateError(e.toString()));
-    }
+      },
+    );
   }
 }

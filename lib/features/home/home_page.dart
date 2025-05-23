@@ -1,17 +1,14 @@
+import 'package:econoapp/common/widgets/transaction_list_view.dart';
+import 'package:econoapp/features/balance/balance_controller.dart';
 import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget.dart';
-import 'package:econoapp/features/home/widgets/balance_card.dat/balance_card_widget_controller.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/constants/app_colors.dart';
-import '../../common/constants/app_text_styles.dart';
-import '../../common/extensions/sizes.dart';
-import '../../common/widgets/app_header.dart';
-import '../../common/widgets/custom_circular_progress_indicator.dart';
-import '../../common/widgets/transaction_listview.dart';
+import '../../common/constants/constants.dart';
+import '../../common/extensions/extensions.dart';
+import '../../common/widgets/widgets.dart';
 import '../../locator.dart';
 import 'home_controller.dart';
 import 'home_state.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,15 +17,39 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with CustomModalSheetMixin {
   final homeController = locator.get<HomeController>();
-  final balanceController = locator.get<BalanceCardWidgetController>();
+  final balanceController = locator.get<BalanceController>();
 
   @override
   void initState() {
     super.initState();
+
     homeController.getLatestTransactions();
     balanceController.getBalances();
+
+    homeController.addListener(() {
+      if (homeController.state is HomeStateError) {
+        if (!mounted) return;
+
+        showCustomModalBottomSheet(
+          context: context,
+          content: (homeController.state as HomeStateError).message,
+          buttonText: 'Go to login',
+          isDismissible: false,
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+            context,
+            NamedRoute.signIn,
+            ModalRoute.withName(NamedRoute.initial),
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -37,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           const AppHeader(),
-          BalanceCard(controller: balanceController),
+          BalanceCardWidget(controller: balanceController),
           Positioned(
             top: 397.h,
             left: 0,
@@ -51,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Transaction History',
+                        'Histórico de Transações',
                         style: AppTextStyles.mediumText18,
                       ),
                       GestureDetector(
@@ -59,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                           homeController.pageController.jumpToPage(2);
                         },
                         child: const Text(
-                          'See all',
+                          'Ver tudo',
                           style: AppTextStyles.inputLabelText,
                         ),
                       ),
@@ -80,13 +101,20 @@ class _HomePageState extends State<HomePage> {
                           child: Text('An error has occurred'),
                         );
                       }
+
                       if (homeController.state is HomeStateSuccess &&
                           homeController.transactions.isNotEmpty) {
                         return TransactionListView(
                           transactionList: homeController.transactions,
-                          itemCount: 5,
+                          itemCount: homeController.transactions.length,
+                          onChange: () {
+                            homeController
+                                .getLatestTransactions()
+                                .then((_) => balanceController.getBalances());
+                          },
                         );
                       }
+
                       return const Center(
                         child: Text('There are no transactions at this time.'),
                       );

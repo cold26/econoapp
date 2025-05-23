@@ -1,5 +1,5 @@
-import 'package:econoapp/common/services/auth_service.dart';
-import 'package:econoapp/common/services/secure_storage.dart';
+import 'package:econoapp/services/auth_service.dart';
+import 'package:econoapp/services/secure_storage.dart';
 import 'package:flutter/foundation.dart';
 
 import 'sign_up_state.dart';
@@ -29,24 +29,22 @@ class SignUpController extends ChangeNotifier {
   }) async {
     _changeState(SignUpStateLoading());
 
-    try {
-      final user = await authService.signUp(
-        name: name,
-        email: email,
-        password: password,
-      );
-      if (user.id != null) {
+    final result = await authService.signUp(
+      name: name,
+      email: email,
+      password: password,
+    );
+
+    result.fold(
+      (error) => _changeState(SignUpStateError(error.message)),
+      (data) async {
         await secureStorageService.write(
           key: "CURRENT_USER",
-          value: user.toJson(),
+          value: data.toJson(),
         );
 
         _changeState(SignUpStateSuccess());
-      } else {
-        throw Exception();
-      }
-    } catch (e) {
-      _changeState(SignUpStateError(e.toString()));
-    }
+      },
+    );
   }
 }
