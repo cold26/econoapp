@@ -1,21 +1,16 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:econoapp/features/transactions/transactions_controller.dart';
-import 'package:econoapp/features/transactions/transactions_state.dart';
+import 'package:econoapp/common/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/constants/app_colors.dart';
-import '../../common/constants/app_text_styles.dart';
-import '../../common/extensions/date_formatter.dart';
-import '../../common/extensions/sizes.dart';
-import '../../common/models/transaction_model.dart';
-import '../../common/utils/money_mask_controller.dart';
-import '../../common/widgets/app_header.dart';
-import '../../common/widgets/custom_circular_progress_indicator.dart';
-import '../../common/widgets/custom_snackbar.dart';
-import '../../common/widgets/custom_text_form_field.dart';
-import '../../common/widgets/primary_button.dart';
+import '../../common/constants/constants.dart';
+import '../../common/extensions/extensions.dart';
+import '../../common/features/balance/balance.dart';
+import '../../common/features/transaction/transaction.dart';
+import '../../common/models/models.dart';
+import '../../common/utils/utils.dart';
+import '../../common/widgets/widgets.dart';
 import '../../locator.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -32,6 +27,7 @@ class TransactionPage extends StatefulWidget {
 class _TransactionPageState extends State<TransactionPage>
     with SingleTickerProviderStateMixin, CustomSnackBar {
   final _transactionController = locator.get<TransactionController>();
+  final _balanceController = locator.get<BalanceController>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -86,29 +82,7 @@ class _TransactionPageState extends State<TransactionPage>
       initialIndex: _initialIndex,
     );
 
-    _transactionController.addListener(() {
-      if (_transactionController.state is TransactionStateLoading) {
-        if (!mounted) return;
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => const CustomCircularProgressIndicator(),
-        );
-      }
-      if (_transactionController.state is TransactionStateSuccess) {
-        if (!mounted) return;
-        Navigator.of(context).pop();
-      }
-      if (_transactionController.state is TransactionStateError) {
-        if (!mounted) return;
-        final error = _transactionController.state as TransactionStateError;
-        showCustomSnackBar(
-          context: context,
-          text: error.message,
-          type: SnackBarType.error,
-        );
-      }
-    });
+    _transactionController.addListener(_handleTransactionStateChange);
   }
 
   @override
@@ -118,7 +92,34 @@ class _TransactionPageState extends State<TransactionPage>
     _descriptionController.dispose();
     _categoryController.dispose();
     _dateController.dispose();
+    _transactionController.removeListener(_handleTransactionStateChange);
     super.dispose();
+  }
+
+  void _handleTransactionStateChange() {
+    final state = _transactionController.state;
+    switch (state.runtimeType) {
+      case TransactionStateLoading:
+        if (!mounted) return;
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => const CustomCircularProgressIndicator(),
+        );
+        break;
+      case TransactionStateSuccess:
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        break;
+      case TransactionStateError:
+        if (!mounted) return;
+        showCustomSnackBar(
+          context: context,
+          text: (state as TransactionStateError).message,
+          type: SnackBarType.error,
+        );
+        break;
+    }
   }
 
   @override
@@ -129,7 +130,7 @@ class _TransactionPageState extends State<TransactionPage>
           AppHeader(
             title: widget.transaction != null
                 ? 'Edit Transaction'
-                : 'Adicionar Transação',
+                : 'Add Transaction',
           ),
           Positioned(
             top: 164.h,
@@ -175,7 +176,7 @@ class _TransactionPageState extends State<TransactionPage>
                                     ),
                                   ),
                                   child: Text(
-                                    'Recebimentos',
+                                    'Income',
                                     style: AppTextStyles.mediumText16w500
                                         .apply(color: AppColors.darkGrey),
                                   ),
@@ -193,7 +194,7 @@ class _TransactionPageState extends State<TransactionPage>
                                     ),
                                   ),
                                   child: Text(
-                                    'Despesas',
+                                    'Expense',
                                     style: AppTextStyles.mediumText16w500
                                         .apply(color: AppColors.darkGrey),
                                   ),
@@ -208,7 +209,7 @@ class _TransactionPageState extends State<TransactionPage>
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _amountController,
                         keyboardType: TextInputType.number,
-                        labelText: "Valor",
+                        labelText: "Amount",
                         hintText: "Type an amount",
                         suffixIcon: StatefulBuilder(
                           builder: (context, setState) {
@@ -233,8 +234,8 @@ class _TransactionPageState extends State<TransactionPage>
                       CustomTextFormField(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         controller: _descriptionController,
-                        labelText: 'Descrição',
-                        hintText: 'Adicione uma descrição',
+                        labelText: 'Description',
+                        hintText: 'Add a description',
                         validator: (value) {
                           if (_descriptionController.text.isEmpty) {
                             return 'This field cannot be empty.';
@@ -247,7 +248,7 @@ class _TransactionPageState extends State<TransactionPage>
                         controller: _categoryController,
                         readOnly: true,
                         labelText: "Category",
-                        hintText: "Selecione a categoria",
+                        hintText: "Select a category",
                         validator: (value) {
                           if (_categoryController.text.isEmpty) {
                             return 'This field cannot be empty.';
@@ -281,7 +282,7 @@ class _TransactionPageState extends State<TransactionPage>
                         readOnly: true,
                         suffixIcon: const Icon(Icons.calendar_month_outlined),
                         labelText: "Date",
-                        hintText: "Selecione a data",
+                        hintText: "Select a date",
                         validator: (value) {
                           if (_dateController.text.isEmpty) {
                             return 'This field cannot be empty.';
@@ -344,12 +345,19 @@ class _TransactionPageState extends State<TransactionPage>
                               if (widget.transaction != null) {
                                 await _transactionController
                                     .updateTransaction(newTransaction);
+                                await _balanceController.updateBalance(
+                                  oldTransaction: widget.transaction!,
+                                  newTransaction: newTransaction,
+                                );
                                 if (mounted) {
                                   Navigator.of(context).pop(true);
                                 }
                               } else {
                                 await _transactionController
                                     .addTransaction(newTransaction);
+                                await _balanceController.updateBalance(
+                                  newTransaction: newTransaction,
+                                );
                                 if (mounted) {
                                   Navigator.of(context).pop(true);
                                 }

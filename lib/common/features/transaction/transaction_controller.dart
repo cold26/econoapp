@@ -1,19 +1,19 @@
 import 'package:econoapp/common/models/transaction_model.dart';
 import 'package:econoapp/common/models/user_model.dart';
-import 'package:econoapp/features/transactions/transactions_state.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../repositories/repositories.dart';
 import '../../../services/services.dart';
-
+import '../../models/models.dart';
+import 'transaction_state.dart';
 
 class TransactionController extends ChangeNotifier {
   TransactionController({
     required this.transactionRepository,
-    required this.storage,
+    required this.secureStorageService,
   });
 
-  final SecureStorageService storage;
+  final SecureStorageService secureStorageService;
   final TransactionRepository transactionRepository;
 
   TransactionState _state = TransactionStateInitial();
@@ -28,7 +28,7 @@ class TransactionController extends ChangeNotifier {
   Future<void> addTransaction(TransactionModel transaction) async {
     _changeState(TransactionStateLoading());
 
-    final data = await storage.readOne(key: 'CURRENT_USER');
+    final data = await secureStorageService.readOne(key: 'CURRENT_USER');
     final user = UserModel.fromJson(data ?? '');
     final result = await transactionRepository.addTransaction(
       transaction: transaction,

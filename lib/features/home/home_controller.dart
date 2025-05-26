@@ -2,17 +2,14 @@ import 'package:econoapp/common/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../repositories/repositories.dart';
-import '../../services/sync_service.dart';
 import 'home_state.dart';
 
 class HomeController extends ChangeNotifier {
   HomeController({
     required this.transactionRepository,
-    required this.syncService,
   });
 
   final TransactionRepository transactionRepository;
-  final SyncService syncService;
 
   HomeState _state = HomeStateInitial();
 

@@ -1,4 +1,5 @@
-import 'package:econoapp/common/models/user_model.dart';
+import 'package:econoapp/common/data/data_result.dart';
+import 'package:econoapp/common/data/exceptions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -6,63 +7,101 @@ import '../mock/mock_classes.dart';
 
 void main() {
   late MockFirebaseAuthService mockFirebaseAuthService;
-  late UserModel user;
+  late MockUser user;
   setUp(() {
     mockFirebaseAuthService = MockFirebaseAuthService();
-      user = UserModel(
-      name: 'Usuario1',
-      email: 'usuario1@gmail.com',
-      id: '123456789',
-    );
+    user = MockUser();
   });
 
   group(
-    'Teste de AuthService',
-     (){
- test('Teste de SignUp success', () async {
-  
+    'Tests Firebase Auth Service - Sign Up',
+    () {
+      test('Should return created user', () async {
+        when(
+          () => mockFirebaseAuthService.signUp(
+            name: 'User',
+            email: 'user@email.com',
+            password: 'user@123',
+          ),
+        ).thenAnswer(
+          (_) async => DataResult.success(user),
+        );
 
-    when(() => mockFirebaseAuthService.signUp(
-      name: 'Usuario1',
-      email: 'usuario1@gmail.com',
-      password: 'teste123456',
-    ),
-    ).thenAnswer(
-      (_) async => user);
+        final result = await mockFirebaseAuthService.signUp(
+          name: 'User',
+          email: 'user@email.com',
+          password: 'user@123',
+        );
 
-    final result = await mockFirebaseAuthService.signUp(
-      name: 'Usuario1',
-      email: 'usuario1@gmail.com',
-      password: 'teste123456',
-    );
+        expect(
+          result.data,
+          user,
+        );
+      });
 
-    expect(result, user);
-  });
+      test('Should throw exception', () async {
+        when(
+          () => mockFirebaseAuthService.signUp(
+            name: 'User',
+            email: 'user@email.com',
+            password: 'user@123',
+          ),
+        ).thenThrow(
+          Exception(),
+        );
 
-  test('Teste de SignUp Fail', () async {
-  
+        expect(
+          () => mockFirebaseAuthService.signUp(
+            name: 'User',
+            email: 'user@email.com',
+            password: 'user@123',
+          ),
+          // throwsA(isInstanceOf<Exception>()),
+          throwsException,
+        );
+      });
+    },
+  );
 
-    when(() => mockFirebaseAuthService.signUp(
-      name: 'Usuario1',
-      email: 'usuario1@gmail.com',
-      password: 'teste123456',
-    ),
-    ).thenThrow(
-      Exception(),
+  group('Tests Firebase Auth Service - Sign In', () {
+    test('Should return user data', () async {
+      when(
+        () => mockFirebaseAuthService.signIn(
+          email: 'user@email.com',
+          password: 'user@123',
+        ),
+      ).thenAnswer(
+        (_) async => DataResult.success(user),
       );
 
-    expect(
-    () => mockFirebaseAuthService.signUp(
-    name: 'Usuario1',
-    email: 'usuario1@gmail.com',
-    password: 'teste123456',
-    ),
-    throwsA(isInstanceOf<Exception>()));
+      final result = await mockFirebaseAuthService.signIn(
+        email: 'user@email.com',
+        password: 'user@123',
+      );
+
+      expect(
+        result.data,
+        user,
+      );
+    });
+
+    test('Should throw exception', () async {
+      when(
+        () => mockFirebaseAuthService.signIn(
+          email: 'user@email.com',
+          password: 'user@123',
+        ),
+      ).thenAnswer((_) async => DataResult.failure(const GeneralException()));
+
+      final result = await mockFirebaseAuthService.signIn(
+        email: 'user@email.com',
+        password: 'user@123',
+      );
+
+      result.fold(
+        (error) => expect(error, isA<Exception>()),
+        (data) => expect(data, null),
+      );
+    });
   });
-
-     });
-
- 
-
 }
-

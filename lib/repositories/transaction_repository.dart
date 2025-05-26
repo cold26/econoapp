@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:econoapp/common/models/balances_model.dart';
 import 'package:econoapp/common/models/transaction_model.dart';
-import 'package:econoapp/data/data_result.dart';
 
+import '../common/data/data_result.dart';
 
 /// {@template transaction_repository}
 /// Communicates Transactions CRUD operations between Controllers and Data Sources
@@ -30,5 +30,8 @@ abstract class TransactionRepository {
 
   Future<DataResult<BalancesModel>> getBalances();
 
-  Future<void> updateBalance(TransactionModel newtTansaction);
+  Future<DataResult<BalancesModel>> updateBalance({
+    TransactionModel? oldTransaction,
+    required TransactionModel newTransaction,
+  });
 }

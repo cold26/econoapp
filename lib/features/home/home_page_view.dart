@@ -1,5 +1,5 @@
+import 'package:econoapp/common/features/transaction/transaction_controller.dart';
 import 'package:econoapp/features/balance/balance_controller.dart';
-import 'package:econoapp/features/transactions/transactions_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app_colors.dart';

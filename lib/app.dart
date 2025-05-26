@@ -1,4 +1,4 @@
-import 'package:econoapp/features/transactions/transactions_page.dart';
+import 'package:econoapp/features/transaction/transaction_page.dart';
 import 'package:flutter/material.dart';
 
 import 'common/constants/routes.dart';

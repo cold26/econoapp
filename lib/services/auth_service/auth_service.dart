@@ -1,5 +1,5 @@
-import 'package:econoapp/data/data_result.dart';
-import '../common/models/user_model.dart';
+import 'package:econoapp/common/data/data_result.dart';
+import '../../common/models/user_model.dart';
 
 abstract class AuthService {
   Future<DataResult<UserModel>> signUp({

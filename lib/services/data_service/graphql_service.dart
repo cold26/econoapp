@@ -1,7 +1,7 @@
-import 'package:econoapp/data/exceptions.dart';
+import 'package:econoapp/common/data/exceptions.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import 'auth_service.dart';
+import '../auth_service/auth_service.dart';
 import 'data_service.dart';
 
 class GraphQLService implements DataService<Map<String, dynamic>> {

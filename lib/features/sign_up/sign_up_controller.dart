@@ -1,4 +1,4 @@
-import 'package:econoapp/services/auth_service.dart';
+import 'package:econoapp/services/auth_service/auth_service.dart';
 import 'package:econoapp/services/secure_storage.dart';
 import 'package:flutter/foundation.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:econoapp/data/exceptions.dart';
+import 'package:econoapp/common/data/exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../locator.dart';
+import '../../locator.dart';
 import 'data_service.dart';
 
 class DatabaseService implements DataService<Map<String, dynamic>> {

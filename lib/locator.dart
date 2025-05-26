@@ -1,5 +1,5 @@
+import 'package:econoapp/common/features/transaction/transaction_controller.dart';
 import 'package:econoapp/features/balance/balance_controller.dart';
-import 'package:econoapp/features/transactions/transactions_controller.dart';
 import 'package:get_it/get_it.dart';
 
 
@@ -52,7 +52,6 @@ void setupDependencies() {
   locator.registerFactory<SplashController>(
     () => SplashController(
       secureStorageService: const SecureStorageService(),
-      syncService: locator.get<SyncService>(),
     ),
   );
 
@@ -60,7 +59,6 @@ void setupDependencies() {
     () => SignInController(
       authService: locator.get<AuthService>(),
       secureStorageService: const SecureStorageService(),
-      syncService: locator.get<SyncService>(),
     ),
   );
 
@@ -74,12 +72,6 @@ void setupDependencies() {
   locator.registerLazySingleton<HomeController>(
     () => HomeController(
       transactionRepository: locator.get<TransactionRepository>(),
-      syncService: SyncService(
-        connectionService: const ConnectionService(),
-        databaseService: locator.get<DatabaseService>(),
-        graphQLService: locator.get<GraphQLService>(),
-        secureStorageService: const SecureStorageService(),
-      ),
     ),
   );
 
@@ -98,7 +90,13 @@ void setupDependencies() {
   locator.registerLazySingleton<TransactionController>(
     () => TransactionController(
       transactionRepository: locator.get<TransactionRepository>(),
-      storage: const SecureStorageService(),
+      secureStorageService: const SecureStorageService(),
+    ),
+  );
+
+  locator.registerFactory<SyncController>(
+    () => SyncController(
+      syncService: locator.get<SyncService>(),
     ),
   );
 }

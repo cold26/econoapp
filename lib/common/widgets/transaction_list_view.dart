@@ -1,6 +1,6 @@
+import 'package:econoapp/common/features/transaction/transaction_controller.dart';
 import 'package:econoapp/common/models/transaction_model.dart';
-import 'package:econoapp/features/transactions/transactions_controller.dart';
-import 'package:econoapp/features/transactions/transactions_state.dart';
+import 'package:econoapp/features/transaction/transaction_state.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

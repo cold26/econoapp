@@ -2,12 +2,16 @@ import 'dart:developer';
 
 import 'package:econoapp/common/models/balances_model.dart';
 import 'package:econoapp/common/models/transaction_model.dart';
-import 'package:econoapp/data/exceptions.dart';
 
-import '../common/constants/constants.dart';
-import '../common/extensions/types_ext.dart';
-import '../repositories/repositories.dart';
-import 'services.dart';
+import '../../common/constants/constants.dart';
+import '../../common/data/data.dart';
+import '../../common/extensions/types_ext.dart';
+import '../../common/models/models.dart';
+import '../../repositories/repositories.dart';
+import '../services.dart';
+
+export 'sync_controller.dart';
+export 'sync_state.dart';
 
 class SyncService {
   const SyncService({
@@ -22,60 +26,55 @@ class SyncService {
   final GraphQLService graphQLService;
   final SecureStorageService secureStorageService;
 
-  Future<void> syncFromServer() async {
+  /// Fetch remote information and perform sync from server
+  /// with local database. At the end of the process it sets `NEED_SYNC` to `false`.
+  Future<DataResult<void>> syncFromServer() async {
     log('syncFromServer called', name: 'INFO');
     await connectionService.checkConnection();
-    if (!connectionService.isConnected) return;
-
+    if (!connectionService.isConnected) return DataResult.success(null);
     final needSync = await secureStorageService.readOne(key: 'NEED_SYNC');
-    if (needSync != null && !needSync.toBool()) return;
+    if (needSync != null && !needSync.toBool()) return DataResult.success(null);
 
     try {
       await databaseService.init();
 
       await _syncBalanceFromServer();
       await _syncTransactionsFromServer();
-
       await secureStorageService.write(
         key: 'NEED_SYNC',
         value: false.toString(),
       );
-    } catch (e, stackTrace) {
+
+      return DataResult.success(null);
+    } catch (e) {
       log('syncFromServer exception $e', name: 'ERROR');
-      log('Stack trace: $stackTrace', name: 'ERROR');
-      rethrow;
+      return DataResult.failure(const SyncException(code: 'error'));
     }
   }
 
+  /// Perform sync from server and saves transactions to local database,
+  /// setting transactions with [SyncStatus.synced].
   Future<void> _syncTransactionsFromServer() async {
     final clock = Stopwatch();
 
-    log('_syncTransactionsFromServer called', name: 'INFO');
+    log('_syncTransactions called', name: 'INFO');
 
     final localTransactions = await _getLocalTransactions();
 
-    // Se existem mudanças locais pendentes, evita sobrescrever.
-    if (localTransactions.isNotEmpty) {
-      log('Local transactions pending, skipping sync from server.', name: 'INFO');
-      return;
-    }
+    if (localTransactions.isNotEmpty) return;
 
     final transactionsFromServerResponse = await graphQLService.read(
       path: Queries.qGetTrasactions,
     );
 
-    // Validar se resposta contem dados
-    if (transactionsFromServerResponse['transaction'] == null) {
-      log('No transactions data received from server.', name: 'ERROR');
-      return;
-    }
-
     final parsedTransactionsFromServer =
-        List.from(transactionsFromServerResponse['transaction']);
+        List.from(transactionsFromServerResponse['transaction'] ?? []);
 
     final transactionsFromServer = parsedTransactionsFromServer
         .map((e) => TransactionModel.fromMap(e))
         .toList();
+
+    if (transactionsFromServer.isEmpty) return;
 
     clock.start();
 
@@ -87,20 +86,17 @@ class SyncService {
     }
 
     clock.stop();
-    log('Total sync time: ${clock.elapsed.inSeconds}s',
+    log('total sync time: ${clock.elapsed.inSeconds}',
         name: 'Sync Transactions from Server');
   }
 
+  // Sync balance from server to local database
   Future<void> _syncBalanceFromServer() async {
-    log('_syncBalanceFromServer called', name: 'INFO');
-
+    log('_syncBalance called', name: 'INFO');
     final localBalanceResponse =
         (await databaseService.read(path: TransactionRepository.balancesPath));
 
-    if ((localBalanceResponse['data'] as List).isNotEmpty) {
-      log('Local balance data present, skipping sync from server.', name: 'INFO');
-      return;
-    }
+    if ((localBalanceResponse['data'] as List).isNotEmpty) return;
 
     final remoteBalanceResponse =
         await graphQLService.read(path: Queries.qGetBalances);
@@ -113,6 +109,8 @@ class SyncService {
     );
   }
 
+  /// Helper method to save changes to local database and set
+  /// `NEED_SYNC` to `true`.
   Future<void> saveLocalChanges({
     required String path,
     required Map<String, Object?> params,
@@ -122,7 +120,7 @@ class SyncService {
       params: params,
     );
 
-    if (!(response['data'] as bool? ?? false)) {
+    if (!(response['data'] as bool)) {
       throw const CacheException(code: 'write');
     }
 
@@ -132,33 +130,32 @@ class SyncService {
     );
   }
 
-  Future<void> syncToServer() async {
+  /// Check all local transactions and perform sync to server
+  /// based on the [SyncStatus] of each transaction. If a transaction is marked as
+  /// `SyncStatus.delete`, then it is removed from local database after sync and move to next
+  /// item on the list.
+  ///
+  /// At the end of the process it sets `NEED_SYNC` to `false`.
+  Future<DataResult<void>> syncToServer() async {
     log('syncToServer called', name: 'INFO');
     await connectionService.checkConnection();
 
-    if (!connectionService.isConnected) {
-      log('No internet connection. Aborting syncToServer.', name: 'WARNING');
-      return;
-    }
+    if (!connectionService.isConnected) return DataResult.success(null);
 
     List<TransactionModel> localTransactions = await _getLocalTransactions();
 
-    if (localTransactions.isEmpty) {
-      log('No local transactions to sync.', name: 'INFO');
-      return;
-    }
+    if (localTransactions.isEmpty) return DataResult.success(null);
 
     try {
       for (final t in localTransactions) {
         await _syncLocalTransactionsToServer(t);
-
         if (t.syncStatus == SyncStatus.delete) {
-          await databaseService.delete(
+          databaseService.delete(
               path: TransactionRepository.transactionsPath,
               params: {'id': t.id});
+
           continue;
         }
-
         await saveLocalChanges(
           path: TransactionRepository.transactionsPath,
           params: t.copyWith(syncStatus: SyncStatus.synced).toDatabase(),
@@ -169,18 +166,21 @@ class SyncService {
         key: 'NEED_SYNC',
         value: false.toString(),
       );
-    } catch (e, stackTrace) {
-      log('Unexpected error during syncToServer: $e', name: 'ERROR');
-      log('Stack trace: $stackTrace', name: 'ERROR');
-      throw const SyncException(code: 'error');
+
+      return DataResult.success(null);
+    } catch (e) {
+      log('syncToServer exception $e', name: 'ERROR');
+      return DataResult.failure(const SyncException(code: 'error'));
     }
   }
 
+  /// Gets all local database saved transactions that are marked as "syncable".
+  /// In this case, when the [SyncStatus] is not `SyncStatus.synced`.
   Future<List<TransactionModel>> _getLocalTransactions() async {
     final response = await databaseService.read(
         path: TransactionRepository.transactionsPath);
 
-    final List<Map<String, dynamic>> transactions = response['data'] ?? [];
+    final List<Map<String, dynamic>> transactions = response['data'];
 
     final parsedTransactions = transactions.map((change) {
       return TransactionModel.fromMap(change);
@@ -193,11 +193,12 @@ class SyncService {
     return localChanges;
   }
 
+  ///Performs server sync calls based on [SyncStatus].
   Future<void> _syncLocalTransactionsToServer(
       TransactionModel localTransaction) async {
-    log('_syncLocalTransactionsToServer called for transaction id: ${localTransaction.id}', name: 'INFO');
+    log('_syncLocalTransactionsToServer called', name: 'INFO');
     try {
-      var response = <String, dynamic>{};
+      var response = {};
 
       switch (localTransaction.syncStatus) {
         case SyncStatus.create:
@@ -208,7 +209,8 @@ class SyncService {
           break;
         case SyncStatus.update:
           final transactionWithoutUserId = localTransaction.toMap();
-          transactionWithoutUserId.removeWhere((key, value) => key == 'user_id');
+          transactionWithoutUserId
+              .removeWhere((key, value) => key == 'user_id');
 
           response = await graphQLService.update(
             path: Mutations.mUpdateTransaction,
@@ -221,18 +223,14 @@ class SyncService {
               params: {'id': localTransaction.id});
           break;
         default:
-          log('Unknown syncStatus: ${localTransaction.syncStatus}', name: 'ERROR');
-          throw const SyncException(code: 'error');
+          response = response;
       }
 
-      // VERIFICAÇÃO EXTRA ajustada: só loga, não lança exceção
       if (response.isEmpty) {
-        log('GraphQL response is empty for transaction ID: ${localTransaction.id}', name: 'WARNING');
-        log('Transaction data sent: ${localTransaction.toMap()}', name: 'WARNING');
+        throw const SyncException(code: 'error');
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       log('_syncLocalTransactionsToServer exception $e', name: 'ERROR');
-      log('Stack trace: $stackTrace', name: 'ERROR');
       rethrow;
     }
   }
